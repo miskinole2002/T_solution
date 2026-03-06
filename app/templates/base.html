@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ImmoPro — Gestion Immobilière</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --navy:      #0b1f3a;
+      --teal:      #0e7490;
+      --teal-glow: #22d3ee;
+      --gold:      #f0a500;
+      --bg:        #eef2f7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ══════════════════════════
+       HEADER
+    ══════════════════════════ */
+    .main-header {
+      background: var(--navy);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+
+    /* Glow effect derrière le header */
+    .main-header::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: -80px;
+      width: 300px; height: 200px;
+      background: radial-gradient(circle, rgba(14,116,144,0.5) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: glow 6s ease-in-out infinite alternate;
+    }
+    .main-header::after {
+      content: '';
+      position: absolute;
+      top: -40px; right: -60px;
+      width: 250px; height: 180px;
+      background: radial-gradient(circle, rgba(240,165,0,0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: glow 8s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes glow {
+      from { transform: scale(1); opacity: .7; }
+      to   { transform: scale(1.2); opacity: 1; }
+    }
+
+    .header-inner {
+      position: relative; z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 70px;
+    }
+
+    /* Logo */
+    .header-brand {
+      display: flex; align-items: center; gap: 13px;
+      text-decoration: none;
+    }
+    .brand-icon {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--teal), var(--teal-glow));
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: #fff;
+      box-shadow: 0 4px 16px rgba(14,116,144,0.55);
+      flex-shrink: 0;
+    }
+    .brand-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; color: #fff;
+      letter-spacing: .3px; line-height: 1;
+    }
+    .brand-text span {
+      font-size: .6rem; letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      display: block; margin-top: 2px;
+    }
+
+    /* Nav links */
+    .header-nav {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .header-nav a {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 14px; border-radius: 9px;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none; font-size: .875rem;
+      transition: all .2s ease;
+    }
+    .header-nav a:hover {
+      background: rgba(255,255,255,0.09);
+      color: #fff;
+    }
+    .header-nav a.active {
+      background: linear-gradient(90deg, var(--teal), #0a9ab8);
+      color: #fff; font-weight: 600;
+      box-shadow: 0 3px 14px rgba(14,116,144,0.4);
+    }
+    .header-nav a i { font-size: .9rem; }
+
+    /* Right side */
+    .header-right {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .hdr-icon {
+      position: relative;
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none; font-size: .95rem;
+      transition: all .2s;
+    }
+    .hdr-icon:hover {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border-color: rgba(255,255,255,0.25);
+    }
+    .notif-dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 7px; height: 7px;
+      background: #ef4444; border-radius: 50%;
+      border: 2px solid var(--navy);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity:1; } 50% { opacity:.3; }
+    }
+
+    /* User pill */
+    .user-pill {
+      display: flex; align-items: center; gap: 9px;
+      padding: 6px 12px 6px 7px;
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 30px;
+      cursor: pointer; transition: all .2s;
+    }
+    .user-pill:hover { background: rgba(255,255,255,0.12); }
+    .user-ava {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #fcd34d);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .75rem; color: var(--navy);
+      box-shadow: 0 2px 8px rgba(240,165,0,0.4);
+    }
+    .user-pill span {
+      font-size: .8rem; color: #fff; font-weight: 500;
+    }
+
+    /* Hamburger */
+    .btn-menu {
+      display: none; background: none; border: none;
+      color: #fff; font-size: 1.4rem; cursor: pointer;
+      padding: 4px 6px; border-radius: 8px;
+    }
+
+    /* Mobile nav */
+    .mobile-nav {
+      display: none;
+      flex-direction: column;
+      background: rgba(0,0,0,0.25);
+      padding: 10px 16px 16px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      position: relative; z-index: 1;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 9px;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none; font-size: .875rem;
+      transition: background .2s;
+    }
+    .mobile-nav a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    /* ══════════════════════════
+       CONTENU
+    ══════════════════════════ */
+    .page-content {
+      flex: 1;
+      padding: 36px 40px;
+      animation: fadeUp .4s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════
+       FOOTER
+    ══════════════════════════ */
+    .main-footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.6);
+      overflow: hidden;
+      position: relative;
+    }
+    .main-footer::before {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: -60px;
+      width: 250px; height: 200px;
+      background: radial-gradient(circle, rgba(14,116,144,0.35) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .main-footer::after {
+      content: '';
+      position: absolute;
+      top: -30px; right: -50px;
+      width: 200px; height: 160px;
+      background: radial-gradient(circle, rgba(240,165,0,0.2) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .footer-top {
+      position: relative; z-index: 1;
+      display: flex; align-items: flex-start;
+      justify-content: space-between;
+      padding: 40px 40px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      flex-wrap: wrap; gap: 30px;
+    }
+
+    .footer-brand .brand-icon {
+      width: 40px; height: 40px; margin-bottom: 12px;
+    }
+    .footer-brand h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; color: #fff; margin-bottom: 6px;
+    }
+    .footer-brand p {
+      font-size: .8rem; color: rgba(255,255,255,0.4);
+      max-width: 220px; line-height: 1.6;
+    }
+
+    .footer-col h4 {
+      font-size: .65rem; text-transform: uppercase;
+      letter-spacing: 2.5px; color: rgba(255,255,255,0.3);
+      font-weight: 600; margin-bottom: 14px;
+    }
+    .footer-col a {
+      display: flex; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none; font-size: .83rem;
+      margin-bottom: 9px; transition: color .2s;
+    }
+    .footer-col a:hover { color: var(--teal-glow); }
+    .footer-col a i { font-size: .8rem; color: var(--teal); }
+
+    .footer-bottom {
+      position: relative; z-index: 1;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      font-size: .73rem;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .footer-bottom .copy { color: rgba(255,255,255,0.3); }
+    .footer-bottom .copy span {
+      font-family: 'Playfair Display', serif;
+      color: rgba(255,255,255,0.6);
+    }
+    .footer-socials { display: flex; gap: 8px; }
+    .social-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.5); font-size: .85rem;
+      text-decoration: none; transition: all .2s;
+    }
+    .social-btn:hover {
+      background: var(--teal); border-color: var(--teal);
+      color: #fff; transform: translateY(-2px);
+    }
+
+    /* ══════════════════════════
+       RESPONSIVE
+    ══════════════════════════ */
+    @media (max-width: 768px) {
+      .header-nav, .header-right { display: none; }
+      .btn-menu { display: block; }
+      .header-inner { padding: 0 20px; }
+      .page-content { padding: 22px 18px; }
+      .footer-top { padding: 28px 20px 20px; }
+      .footer-bottom { padding: 14px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ████████████████████████████
+     HEADER
+████████████████████████████ -->
+<header class="main-header">
+  <div class="header-inner">
+
+    <!-- Logo -->
+    <a href="/" class="header-brand">
+      <div class="brand-icon"><i class="bi bi-buildings-fill"></i></div>
+      <div class="brand-text">
+        <h1>T-immo</h1>
+        <span>Gestion Immobilière</span>
+      </div>
+    </a>
+
+    <!-- Navigation -->
+    <nav class="header-nav">
+      <!-- <a href="/dashboard" class="active"><i class="bi bi-speedometer2"></i> Tableau de bord</a> -->
+      <!-- <a href="/immeubles"><i class="bi bi-building-fill"></i> Immeubles</a>
+      <a href="/locataires"><i class="bi bi-people-fill"></i> Locataires</a>
+      <a href="/paiements"><i class="bi bi-cash-coin"></i> Paiements</a> -->
+    </nav>
+
+    <!-- Droite -->
+    <div class="header-right">
+      <!-- <a href="#" class="hdr-icon">
+        <i class="bi bi-bell-fill"></i>
+        <span class="notif-dot"></span>
+      </a>
+      <a href="#" class="hdr-icon">
+        <i class="bi bi-envelope-fill"></i>
+      </a> -->
+      <div class="user-pill">
+        <div class="user-ava">MA</div>
+      <a href="/login"><span>connexion</span> </a>
+
+        <!-- <span>Connexion</span> -->
+      </div>
+    </div>
+
+    <!-- Hamburger mobile -->
+    <!-- <button class="btn-menu" onclick="toggleMenu()">
+      <i class="bi bi-list" id="menuIcon"></i>
+    </button> -->
+
+  </div>
+
+  <!-- Menu mobile -->
+  <!-- <div class="mobile-nav" id="mobileNav">
+    <a href="/dashboard"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
+    <a href="/immeubles"><i class="bi bi-building-fill"></i> Immeubles</a>
+    <a href="/appartements"><i class="bi bi-door-open-fill"></i> Appartements</a>
+    <a href="/locataires"><i class="bi bi-people-fill"></i> Locataires</a>
+    <a href="/contrats"><i class="bi bi-file-earmark-text-fill"></i> Contrats</a>
+    <a href="/paiements"><i class="bi bi-cash-coin"></i> Paiements</a>
+    <a href="/rapports"><i class="bi bi-graph-up-arrow"></i> Rapports</a>
+  </div> -->
+</header>
+
+
+<!-- chargement des pages  -->
+<main class="page-content">
+  {% block content %}{% endblock %}
+</main>
+
+
+<footer class="main-footer">
+
+  <div class="footer-top">
+
+    <!-- Branding -->
+    <div class="footer-brand">
+      <div class="brand-icon"><i class="bi bi-buildings-fill"></i></div>
+      <h2>T-immo</h2>
+      <p>La solution complète pour gérer vos immeubles, locataires et finances en toute simplicité.</p>
+    </div>
+
+    <!-- Liens rapides -->
+    <!-- <div class="footer-col">
+      <h4>Navigation</h4>
+      <a href="/"><i class="bi bi-chevron-right"></i> Tableau de bord</a>
+      <a href="/immeubles"><i class="bi bi-chevron-right"></i> Immeubles</a>
+      <a href="/appartements"><i class="bi bi-chevron-right"></i> Appartements</a>
+      <a href="/locataires"><i class="bi bi-chevron-right"></i> Locataires</a>
+    </div> -->
+
+    <!-- Compte -->
+    <!-- <div class="footer-col">
+      <h4>Compte</h4>
+      <a href="/contrats"><i class="bi bi-chevron-right"></i> Contrats</a>
+      <a href="/paiements"><i class="bi bi-chevron-right"></i> Paiements</a>
+      <a href="/rapports"><i class="bi bi-chevron-right"></i> Rapports</a>
+      <a href="/parametres"><i class="bi bi-chevron-right"></i> Paramètres</a>
+    </div> -->
+
+    <!-- Contact -->
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="#"><i class="bi bi-envelope-fill"></i>Consulting@tchapssolution.com</a>
+      <a href="#"><i class="bi bi-telephone-fill"></i>+1 (438) 812-6791 </a>
+      <a href="#"><i class="bi bi-geo-alt-fill"></i> 139 Rue Sauvé Ouest,
+Montreal, QC H3L 1Y4
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <div class="copy">© 2025 <span>William</span> — Tous droits réservés</div>
+    <div class="footer-socials">
+      <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
+      <a href="#" class="social-btn"><i class="bi bi-linkedin"></i></a>
+      <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
+      <a href="#" class="social-btn"><i class="bi bi-twitter-x"></i></a>
+    </div>
+  </div>
+
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function toggleMenu() {
+    const nav  = document.getElementById('mobileNav');
+    const icon = document.getElementById('menuIcon');
+    nav.classList.toggle('open');
+    icon.className = nav.classList.contains('open') ? 'bi bi-x-lg' : 'bi bi-list';
+  }
+
+  // Lien actif automatique
+  document.querySelectorAll('.header-nav a, .mobile-nav a').forEach(a => {
+    if (a.getAttribute('href') === window.location.pathname) {
+      a.classList.add('active');
+    } else {
+      a.classList.remove('active');
+    }
+  });
+</script>
+
+</body>
+</html>

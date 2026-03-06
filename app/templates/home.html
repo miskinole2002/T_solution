@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  :root {
+    --navy:      #0b1f3a;
+    --teal:      #0e7490;
+    --teal-glow: #22d3ee;
+    --gold:      #f0a500;
+    --gold-lt:   #fcd34d;
+  }
+
+  /* ── HERO ── */
+  .hero-section {
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--navy) 0%, #0d2e52 55%, #0e5a75 100%);
+    border-radius: 24px;
+    margin-bottom: 40px;
+    padding: 60px 64px;
+  }
+
+  /* Animated orbs */
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(34,211,238,.22) 0%, transparent 65%);
+    border-radius: 50%;
+    animation: float 8s ease-in-out infinite alternate;
+  }
+  .hero-section::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: 35%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(240,165,0,.18) 0%, transparent 65%);
+    border-radius: 50%;
+    animation: float 10s ease-in-out infinite alternate-reverse;
+  }
+
+  /* Grid dots texture */
+  .hero-dots {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    border-radius: 24px;
+  }
+
+  @keyframes float {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(20px,25px) scale(1.1); }
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(22px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    max-width: 560px;
+  }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(34,211,238,.12);
+    border: 1px solid rgba(34,211,238,.25);
+    color: var(--teal-glow);
+    font-size: .72rem; letter-spacing: 2px;
+    text-transform: uppercase; font-weight: 600;
+    padding: 6px 14px; border-radius: 30px;
+    margin-bottom: 24px;
+    animation: fadeUp .5s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.2rem; color: #fff;
+    line-height: 1.15; margin-bottom: 20px;
+    animation: fadeUp .5s ease .1s both;
+  }
+  .hero-title span {
+    background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-desc {
+    color: rgba(255,255,255,.55);
+    font-size: .97rem; line-height: 1.8;
+    margin-bottom: 36px;
+    animation: fadeUp .5s ease .2s both;
+  }
+
+  .hero-btns {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    animation: fadeUp .5s ease .3s both;
+  }
+
+  .btn-primary-gold {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 13px 28px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+    color: var(--navy); font-weight: 700; font-size: .9rem;
+    text-decoration: none;
+    box-shadow: 0 6px 22px rgba(240,165,0,.45);
+    transition: all .25s;
+  }
+  .btn-primary-gold:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(240,165,0,.55);
+    color: var(--navy);
+  }
+
+  .btn-outline-white {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 13px 28px; border-radius: 12px;
+    background: rgba(255,255,255,.07);
+    color: #fff; font-size: .9rem; font-weight: 500;
+    text-decoration: none;
+    border: 1.5px solid rgba(255,255,255,.18);
+    transition: all .25s;
+  }
+  .btn-outline-white:hover {
+    background: rgba(255,255,255,.14);
+    color: #fff; transform: translateY(-3px);
+    border-color: rgba(255,255,255,.3);
+  }
+
+  /* Hero right — floating card mockup */
+  .hero-visual {
+    position: absolute; right: 60px; top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    animation: fadeUp .6s ease .4s both;
+  }
+
+  .mock-card {
+    background: rgba(255,255,255,.07);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 20px;
+    padding: 24px;
+    width: 280px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  }
+  .mock-card-title {
+    font-size: .65rem; text-transform: uppercase;
+    letter-spacing: 2px; color: rgba(255,255,255,.4);
+    margin-bottom: 18px; font-weight: 600;
+  }
+  .mock-stat {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 11px 14px; border-radius: 10px;
+    background: rgba(255,255,255,.06);
+    margin-bottom: 8px;
+  }
+  .mock-stat:last-child { margin-bottom: 0; }
+  .mock-stat-left { display: flex; align-items: center; gap: 10px; }
+  .mock-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem;
+  }
+  .mock-icon.t { background: rgba(14,116,144,.3); color: var(--teal-glow); }
+  .mock-icon.g { background: rgba(240,165,0,.25); color: var(--gold-lt); }
+  .mock-icon.w { background: rgba(255,255,255,.12); color: #fff; }
+  .mock-lbl { font-size: .75rem; color: rgba(255,255,255,.6); }
+  .mock-val { font-family: 'Playfair Display', serif; font-size: .9rem; color: #fff; font-weight: 700; }
+  .mock-badge {
+    font-size: .6rem; padding: 2px 7px; border-radius: 20px;
+    background: rgba(34,211,238,.15); color: var(--teal-glow); font-weight: 600;
+  }
+
+  /* Floating mini cards */
+  .float-pill {
+    position: absolute;
+    background: rgba(255,255,255,.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 30px;
+    padding: 8px 16px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: .75rem; color: #fff; font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    z-index: 2;
+  }
+  .float-pill i { font-size: .85rem; }
+  .pill-1 { top: 90px; right: 50px; animation: floatY 4s ease-in-out infinite alternate; }
+  .pill-2 { bottom: 100px; right: 310px; animation: floatY 5s ease-in-out 1s infinite alternate-reverse; }
+  @keyframes floatY {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-10px); }
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 1px;
+    background: #dde5ef;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 56px;
+    box-shadow: 0 2px 14px rgba(0,0,0,.06);
+    animation: fadeUp .5s ease .2s both;
+  }
+  .stat-item {
+    background: #fff;
+    padding: 28px 24px;
+    text-align: center;
+    transition: background .2s;
+  }
+  .stat-item:hover { background: #f8fafd; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; color: var(--navy);
+    line-height: 1; margin-bottom: 6px;
+  }
+  .stat-num span { color: var(--teal); }
+  .stat-lbl { font-size: .78rem; color: #96a8bc; text-transform: uppercase; letter-spacing: 1.5px; }
+
+  /* ── FEATURES ── */
+  .section-title {
+    text-align: center; margin-bottom: 40px;
+    animation: fadeUp .5s ease both;
+  }
+  .section-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; color: var(--navy); margin-bottom: 10px;
+  }
+  .section-title p { color: #7a90a8; font-size: .9rem; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 20px; margin-bottom: 56px;
+  }
+
+  .feat-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px 26px;
+    border: 1px solid #e4ecf4;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+    transition: all .25s;
+    animation: fadeUp .5s ease both;
+  }
+  .feat-card:nth-child(1) { animation-delay:.05s; }
+  .feat-card:nth-child(2) { animation-delay:.10s; }
+  .feat-card:nth-child(3) { animation-delay:.15s; }
+  .feat-card:nth-child(4) { animation-delay:.20s; }
+  .feat-card:nth-child(5) { animation-delay:.25s; }
+  .feat-card:nth-child(6) { animation-delay:.30s; }
+
+  .feat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 36px rgba(0,0,0,.09);
+    border-color: #c8d8ec;
+  }
+
+  .feat-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin-bottom: 18px;
+  }
+  .feat-icon.t1 { background: #ecfeff; color: var(--teal); }
+  .feat-icon.t2 { background: #fffbeb; color: var(--gold); }
+  .feat-icon.t3 { background: #f0fdf4; color: #16a34a; }
+  .feat-icon.t4 { background: #fef2f2; color: #dc2626; }
+  .feat-icon.t5 { background: #f5f3ff; color: #7c3aed; }
+  .feat-icon.t6 { background: #fff7ed; color: #ea580c; }
+
+  .feat-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; color: var(--navy); margin-bottom: 8px;
+  }
+  .feat-card p { font-size: .83rem; color: #7a90a8; line-height: 1.7; }
+
+  /* ── CTA BAND ── */
+  .cta-band {
+    background: linear-gradient(135deg, var(--navy), #0e5a75);
+    border-radius: 22px;
+    padding: 56px 60px;
+    text-align: center;
+    position: relative; overflow: hidden;
+    margin-bottom: 10px;
+    animation: fadeUp .5s ease both;
+  }
+  .cta-band::before {
+    content: '';
+    position: absolute; top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 300px;
+    background: radial-gradient(circle, rgba(34,211,238,.2) 0%, transparent 65%);
+    border-radius: 50%;
+  }
+  .cta-band h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; color: #fff;
+    margin-bottom: 12px; position: relative; z-index: 1;
+  }
+  .cta-band p {
+    color: rgba(255,255,255,.55); font-size: .9rem;
+    margin-bottom: 32px; position: relative; z-index: 1;
+  }
+  .cta-band .btn-primary-gold { position: relative; z-index: 1; margin: 0 auto; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .hero-visual { display: none; }
+    .hero-title { font-size: 2.4rem; }
+    .features-grid { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 768px) {
+    .hero-section { padding: 44px 28px; min-height: auto; }
+    .hero-title { font-size: 1.9rem; }
+    .stats-bar { grid-template-columns: repeat(2,1fr); }
+    .features-grid { grid-template-columns: 1fr; }
+    .cta-band { padding: 36px 24px; }
+    .float-pill { display: none; }
+  }
+</style>
+
+
+<!-- ════════════════════════
+     HERO
+════════════════════════ -->
+<section class="hero-section">
+  <div class="hero-dots"></div>
+
+  <!-- Floating pills -->
+  <!-- <div class="float-pill pill-1">
+    <i class="bi bi-check-circle-fill" style="color:#4ade80"></i> Paiement reçu — 1 250 $
+  </div>
+  <div class="float-pill pill-2">
+    <i class="bi bi-person-fill" style="color:var(--teal-glow)"></i> Nouveau locataire ajouté
+  </div> -->
+
+  <div class="hero-content">
+    <div class="hero-tag">
+      <i class="bi bi-buildings-fill"></i> Plateforme de gestion immobilière
+    </div>
+    <h1 class="hero-title">
+      Gérez vos immeubles<br>avec <span>élégance</span>
+    </h1>
+    <p class="hero-desc">
+      T-Immo centralise la gestion de vos biens, locataires, contrats et paiements
+      dans une interface simple, moderne et efficace — conçue pour Mr. Audrey.
+    </p>
+    <div class="hero-btns">
+      <a href="/login" class="btn-primary-gold">
+        <i class="bi bi-box-arrow-in-right"></i> Se connecter
+      </a>
+      <a href="#features" class="btn-outline-white">
+        <i class="bi bi-play-circle"></i> Découvrir
+      </a>
+    </div>
+  </div>
+
+  <!-- Visual mockup -->
+  <div class="hero-visual">
+    <div class="mock-card">
+      <div class="mock-card-title">Tableau de bord</div>
+      <div class="mock-stat">
+        <div class="mock-stat-left">
+          <div class="mock-icon t"><i class="bi bi-building-fill"></i></div>
+          <div class="mock-lbl">Immeubles</div>
+        </div>
+        <div class="mock-val">3</div>
+      </div>
+      <div class="mock-stat">
+        <div class="mock-stat-left">
+          <div class="mock-icon g"><i class="bi bi-people-fill"></i></div>
+          <div class="mock-lbl">Locataires</div>
+        </div>
+        <div class="mock-val">18</div>
+      </div>
+      <div class="mock-stat">
+        <div class="mock-stat-left">
+          <div class="mock-icon w"><i class="bi bi-cash-coin"></i></div>
+          <div class="mock-lbl">Revenus / mois</div>
+        </div>
+        <div>
+          <div class="mock-val">48 500 $</div>
+          <div class="mock-badge">+8%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════
+     STATS
+════════════════════════ -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">3<span>+</span></div>
+    <div class="stat-lbl">Immeubles</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">24<span>+</span></div>
+    <div class="stat-lbl">Appartements</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">18<span>+</span></div>
+    <div class="stat-lbl">Locataires actifs</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">48K<span>$</span></div>
+    <div class="stat-lbl">Revenus mensuels</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════
+     FEATURES
+════════════════════════ -->
+<div id="features">
+  <div class="section-title">
+    <h2>Tout ce dont vous avez besoin</h2>
+    <p>Une solution complète pour piloter votre patrimoine immobilier</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon t1"><i class="bi bi-building-fill"></i></div>
+      <h4>Gestion des immeubles</h4>
+      <p>Centralisez tous vos immeubles et appartements dans un seul endroit avec une vue d'ensemble claire.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon t2"><i class="bi bi-people-fill"></i></div>
+      <h4>Suivi des locataires</h4>
+      <p>Gérez les fiches, contrats et historiques de chaque locataire facilement et en temps réel.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon t3"><i class="bi bi-cash-coin"></i></div>
+      <h4>Paiements & loyers</h4>
+      <p>Suivez les paiements, identifiez les retards et générez des reçus en quelques clics.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon t4"><i class="bi bi-file-earmark-text-fill"></i></div>
+      <h4>Contrats de location</h4>
+      <p>Créez, renouvelez et archivez vos contrats avec alertes automatiques d'échéance.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon t5"><i class="bi bi-graph-up-arrow"></i></div>
+      <h4>Rapports & analyses</h4>
+      <p>Visualisez vos revenus, taux d'occupation et performances par immeuble avec des graphiques clairs.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon t6"><i class="bi bi-shield-lock-fill"></i></div>
+      <h4>Sécurité & accès</h4>
+      <p>Connexion sécurisée avec contrôle total sur les données et accès protégé à votre espace.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════
+     CTA
+════════════════════════ -->
+<div class="cta-band">
+  <h2>Prêt à prendre le contrôle ?</h2>
+  <p>Connectez-vous à votre espace ImmoPro et gérez votre patrimoine en toute sérénité.</p>
+  <a href="/login" class="btn-primary-gold">
+    <i class="bi bi-box-arrow-in-right"></i> Accéder à mon espace
+  </a>
+</div>
+
+{% endblock %}
