@@ -330,7 +330,7 @@
       <i class="bi bi-people-fill"></i> Locataires
     </button>
     <button class="sb-link" onclick="showSection('baux',this)">
-      <i class="bi bi-file-earmark-text-fill"></i> Baux & Contrats
+      <i class="bi bi-file-earmark-text-fill"></i> Bails
     </button>
 
     <div class="sb-lbl">Finances</div>
@@ -354,12 +354,14 @@
          APPARTEMENTS
     ════════════════════════ -->
     <div class="dash-section active" id="section-appartements">
+      
       <div class="page-hdr">
         <h2><i class="bi bi-door-open-fill"></i> Appartements</h2>
         <button class="btn btn-teal" onclick="openModal('modal-add-apt')">
           <i class="bi bi-plus-circle-fill"></i> Ajouter
         </button>
       </div>
+      <p></p>
       <div class="card">
         <div class="card-head">
           <h3><i class="bi bi-list-ul"></i> Liste des appartements</h3>
@@ -370,31 +372,14 @@
             <tr><th>N° App.</th><th>Étage</th><th>Superficie</th><th>Type</th><th>Loyer</th><th>Statut</th><th>Actions</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>101</strong></td><td>RDC</td><td>65 m²</td><td>T2</td><td>950 $</td><td><span class="badge bg-green">Occupé</span></td>
+            {%for item in A%}
+            
+            <tr><td><strong>{{item[1]}}</strong></td><td>{{item[4]}}</td><td>{{item[2]}}m²</td><td>{{item[2]}}</td><td>950 $</td><td> {%if item[5]=="Occupé"%} <span class="badge bg-gold">{{item[5]}}</span>{%else%} <span class="badge bg-green">{{item[5]}}</span>{%endif%}</td>
               <td class="t-actions">
                 <button class="btn btn-outline btn-sm" onclick="openModal('modal-edit-apt')"><i class="bi bi-pencil-fill"></i> Modifier</button>
                 <button class="btn btn-danger btn-sm" onclick="confirmDelete('Appartement 101')"><i class="bi bi-trash-fill"></i></button>
               </td></tr>
-            <tr><td><strong>102</strong></td><td>RDC</td><td>70 m²</td><td>T2</td><td>980 $</td><td><span class="badge bg-green">Occupé</span></td>
-              <td class="t-actions">
-                <button class="btn btn-outline btn-sm" onclick="openModal('modal-edit-apt')"><i class="bi bi-pencil-fill"></i> Modifier</button>
-                <button class="btn btn-danger btn-sm" onclick="confirmDelete('Appartement 102')"><i class="bi bi-trash-fill"></i></button>
-              </td></tr>
-            <tr><td><strong>201</strong></td><td>2ème</td><td>75 m²</td><td>T3</td><td>1 050 $</td><td><span class="badge bg-gold">Disponible</span></td>
-              <td class="t-actions">
-                <button class="btn btn-outline btn-sm" onclick="openModal('modal-edit-apt')"><i class="bi bi-pencil-fill"></i> Modifier</button>
-                <button class="btn btn-danger btn-sm" onclick="confirmDelete('Appartement 201')"><i class="bi bi-trash-fill"></i></button>
-              </td></tr>
-            <tr><td><strong>301</strong></td><td>3ème</td><td>90 m²</td><td>T3</td><td>1 250 $</td><td><span class="badge bg-green">Occupé</span></td>
-              <td class="t-actions">
-                <button class="btn btn-outline btn-sm" onclick="openModal('modal-edit-apt')"><i class="bi bi-pencil-fill"></i> Modifier</button>
-                <button class="btn btn-danger btn-sm" onclick="confirmDelete('Appartement 301')"><i class="bi bi-trash-fill"></i></button>
-              </td></tr>
-            <tr><td><strong>401</strong></td><td>4ème</td><td>95 m²</td><td>T4</td><td>1 400 $</td><td><span class="badge bg-green">Occupé</span></td>
-              <td class="t-actions">
-                <button class="btn btn-outline btn-sm" onclick="openModal('modal-edit-apt')"><i class="bi bi-pencil-fill"></i> Modifier</button>
-                <button class="btn btn-danger btn-sm" onclick="confirmDelete('Appartement 401')"><i class="bi bi-trash-fill"></i></button>
-              </td></tr>
+              {%endfor%}
           </tbody>
         </table>
       </div>
@@ -460,11 +445,11 @@
 
 
     <!-- ════════════════════════
-         BAUX
+         Bails
     ════════════════════════ -->
     <div class="dash-section" id="section-baux">
       <div class="page-hdr">
-        <h2><i class="bi bi-file-earmark-text-fill"></i> Baux & Contrats</h2>
+        <h2><i class="bi bi-file-earmark-text-fill"></i> Bails </h2>
         <button class="btn btn-navy" onclick="openModal('modal-add-bail')">
           <i class="bi bi-file-earmark-plus-fill"></i> Créer un bail
         </button>
@@ -584,10 +569,10 @@
         <div class="card-head"><h3><i class="bi bi-people-fill"></i> Équipe d'administration</h3></div>
 
         <div class="admin-row">
-          <div class="adm-ava av2">MA</div>
+          <div class="adm-ava av2"></div>
           <div>
-            <div class="adm-name">Mr. Audrey &nbsp;<span class="badge bg-gold">Super Admin</span></div>
-            <div class="adm-email">audrey@immopro.com</div>
+            <div class="adm-name"> {{U.nom}} &nbsp;<span class="badge bg-gold">Super Admin</span></div>
+            <div class="adm-email"> {{U.Email}} </div>
           </div>
           <div class="adm-actions"><span style="font-size:.75rem;color:#96a8bc;">Vous</span></div>
         </div>
@@ -632,27 +617,31 @@
   <div class="modal-box">
     <div class="modal-head">
       <h3><i class="bi bi-plus-circle-fill"></i> Ajouter un appartement</h3>
-      <button class="modal-close" onclick="closeModal('modal-add-apt')"><i class="bi bi-x-lg"></i></button>
+      <button class="modal-close" onclick="closeModal('modal-add-apt')"><i class="bi bi-x-lg"></i></button>     
+    
+    
     </div>
+    <form method="POST" action="/add_App">
     <div class="modal-body">
       <div class="field-row">
-        <div class="field"><label>N° Appartement</label><div class="inp-wrap"><i class="bi bi-door-open"></i><input class="inp" type="text" placeholder="ex: 301"/></div></div>
-        <div class="field"><label>Étage</label><div class="inp-wrap"><i class="bi bi-building"></i><input class="inp" type="text" placeholder="ex: 3ème"/></div></div>
+        <div class="field"><label>N° Appartement</label><div class="inp-wrap"><i class="bi bi-door-open"></i><input class="inp" type="text" placeholder="ex: 301" name="N_App"/></div></div>
+        <div class="field"><label>Étage</label><div class="inp-wrap"><i class="bi bi-building"></i><input class="inp" type="text" placeholder="ex: 3ème" name="etage"/></div></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Superficie (m²)</label><div class="inp-wrap"><i class="bi bi-rulers"></i><input class="inp" type="number" placeholder="75"/></div></div>
-        <div class="field"><label>Type</label><select class="inp inp-bare"><option>T1</option><option>T2</option><option>T3</option><option>T4</option></select></div>
+        <div class="field"><label>Superficie (m²)</label><div class="inp-wrap"><i class="bi bi-rulers"></i><input class="inp" type="number" placeholder="75" name="Superficie"/></div></div>
+        <div class="field"><label>Type</label><select class="inp inp-bare" name="type"><option>T1</option><option>T2</option><option>T3</option><option>T4</option></select></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Loyer mensuel ($)</label><div class="inp-wrap"><i class="bi bi-cash-coin"></i><input class="inp" type="number" placeholder="1 200"/></div></div>
-        <div class="field"><label>Statut</label><select class="inp inp-bare"><option>Disponible</option><option>Occupé</option></select></div>
+        <!-- <div class="field"><label>Loyer mensuel ($)</label><div class="inp-wrap"><i class="bi bi-cash-coin"></i><input class="inp" type="number" placeholder="1 200"/></div></div> -->
+        <div class="field"><label>Statut</label><select name="status" class="inp inp-bare"><option>Disponible</option><option>Occupé</option></select></div>
       </div>
-      <div class="field"><label>Description</label><textarea class="inp inp-bare" rows="3" style="resize:vertical;" placeholder="Notes…"></textarea></div>
+      <!-- <div class="field"><label>Description</label><textarea class="inp inp-bare" rows="3" style="resize:vertical;" placeholder="Notes…"></textarea></div> -->
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-add-apt')">Annuler</button>
-      <button class="btn btn-teal"><i class="bi bi-check-lg"></i> Enregistrer</button>
+      <button type="button" class="btn btn-outline" onclick="closeModal('modal-add-apt')">Annuler</button>
+      <button class="btn btn-teal" type="submit"><i class="bi bi-check-lg"></i> Enregistrer</button>
     </div>
+    </form>
   </div>
 </div>
 
@@ -663,24 +652,26 @@
       <h3><i class="bi bi-pencil-fill"></i> Modifier l'appartement</h3>
       <button class="modal-close" onclick="closeModal('modal-edit-apt')"><i class="bi bi-x-lg"></i></button>
     </div>
+    <form method="post" action="/update_App">
     <div class="modal-body">
       <div class="field-row">
-        <div class="field"><label>N° Appartement</label><div class="inp-wrap"><i class="bi bi-door-open"></i><input class="inp" type="text" value="301"/></div></div>
-        <div class="field"><label>Étage</label><div class="inp-wrap"><i class="bi bi-building"></i><input class="inp" type="text" value="3ème"/></div></div>
+        <div class="field"><label>N° Appartement</label><div class="inp-wrap"><i class="bi bi-door-open"></i><input name="N_App" class="inp" type="text" value="301"/></div></div>
+        <div class="field"><label>Étage</label><div class="inp-wrap"><i class="bi bi-building"></i><input name="etage" class="inp" type="text" value="3ème"/></div></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Superficie (m²)</label><div class="inp-wrap"><i class="bi bi-rulers"></i><input class="inp" type="number" value="90"/></div></div>
-        <div class="field"><label>Type</label><select class="inp inp-bare"><option>T1</option><option>T2</option><option selected>T3</option><option>T4</option></select></div>
+        <div class="field"><label>Superficie (m²)</label><div class="inp-wrap"><i class="bi bi-rulers"></i><input name="Superficie" class="inp" type="number" value="90"/></div></div>
+        <div class="field"><label>Type</label><select class="inp inp-bare" name="type"><option>T1</option><option>T2</option><option selected>T3</option><option>T4</option></select></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Loyer ($)</label><div class="inp-wrap"><i class="bi bi-cash-coin"></i><input class="inp" type="number" value="1250"/></div></div>
-        <div class="field"><label>Statut</label><select class="inp inp-bare"><option>Disponible</option><option selected>Occupé</option></select></div>
+        <!-- <div class="field"><label>Loyer ($)</label><div class="inp-wrap"><i class="bi bi-cash-coin"></i><input class="inp" type="number" value="1250"/></div></div> -->
+        <div class="field"><label>Statut</label><select class="inp inp-bare" name="status" ><option>Disponible</option><option selected>Occupé</option></select></div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-edit-apt')">Annuler</button>
-      <button class="btn btn-teal"><i class="bi bi-check-lg"></i> Mettre à jour</button>
+      <button type="button" class="btn btn-outline" onclick="closeModal('modal-edit-apt')">Annuler</button>
+      <button type="submit" class="btn btn-teal"><i class="bi bi-check-lg"></i> Mettre à jour</button>
     </div>
+    </form>
   </div>
 </div>
 

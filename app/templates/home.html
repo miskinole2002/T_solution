@@ -352,12 +352,18 @@
     </h1>
     <p class="hero-desc">
       T-Immo centralise la gestion de vos biens, locataires, contrats et paiements
-      dans une interface simple, moderne et efficace — conçue pour Mr. Audrey.
+      dans une interface simple, moderne et efficace .
     </p>
     <div class="hero-btns">
-      <a href="/login" class="btn-primary-gold">
+      {%if U %}
+      <a href="/logout" class="btn-primary-gold">
+        <i class="bi bi-box-arrow-in-right"></i> Se deconnecter
+      </a>
+      {%else%}
+       <a href="/login" class="btn-primary-gold">
         <i class="bi bi-box-arrow-in-right"></i> Se connecter
       </a>
+      {%endif%}
       <a href="#features" class="btn-outline-white">
         <i class="bi bi-play-circle"></i> Découvrir
       </a>
@@ -467,6 +473,16 @@
 <!-- ════════════════════════
      CTA
 ════════════════════════ -->
+{%if U %}
+<div class="cta-band">
+  <h2>Bienvenue {{U.nom}}</h2>
+  <p>Votre Patrimoine vous attend .</p>
+  <a href="/login" class="btn-primary-gold">
+    <i class="bi bi-box-arrow-in-right"></i> Deconnecter vous de votre  espace
+  </a>
+</div>
+{%else%}
+
 <div class="cta-band">
   <h2>Prêt à prendre le contrôle ?</h2>
   <p>Connectez-vous à votre espace ImmoPro et gérez votre patrimoine en toute sérénité.</p>
@@ -474,5 +490,6 @@
     <i class="bi bi-box-arrow-in-right"></i> Accéder à mon espace
   </a>
 </div>
+{%endif%}
 
 {% endblock %}

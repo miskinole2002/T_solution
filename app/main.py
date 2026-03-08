@@ -7,8 +7,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from .models import Appartements,User,Locataire
 import sys,os
-from sqlmodel import SQLModel,create_engine,Session,select
-from .securite import password_hash,password_verify 
+from sqlmodel import SQLModel,create_engine,Session
+from .function import password_hash,password_verify,all_appartement
 from starlette.middleware.sessions import SessionMiddleware 
 
 
@@ -35,16 +35,19 @@ SessionDep=Annotated[Session,Depends(get_session)]
 
 # x=SessionDep.execute(select(User)).all()
 #     print(x)
+#   sql =text("SELECT * FROM Appartement")
+#     x=session.execute(sql)
 
+#     users = x.fetchall()
+
+#     print(users)
 
 @app.get("/")
 async def home_page(session: SessionDep, request:Request):
-    sql =text("SELECT * FROM Appartement")
-    x=session.execute(sql)
-
-    users = x.fetchall()
-
-    print(users)
+    User=request.session.get("user")
+    if User:
+        return templates.TemplateResponse("home.html",{"request":request,"U":User})
+  
     return templates.TemplateResponse("home.html",{"request":request})
 
 #connexion
@@ -57,21 +60,108 @@ async def home_page(request:Request):
     return templates.TemplateResponse("login.html",{"request":request})
 
 @app.post("/login")
-async def home_page(session: SessionDep, request:Request,Email:str=Form(...), password:str=Form(...) ):
+async def home_page(session: SessionDep, request:Request,email:str=Form(...), password:str=Form(...) ):
+     
+    # if not email or not password: 
+    #     request.session["error"] = "veuillez remplir tout les champs svp"
+    #     return RedirectResponse(url='/login', status_code=302)
+    
+    sql=text("select* from Users where email=:email")
+    params={"email":email}
+    cursor=session.execute(sql,params)
+    result=cursor.fetchone()
+    
+    if result:
+       
+        # R= password_verify(password,result[1])
+        S={
+            "user_id":result[0],
+            "nom":result[1],
+            "prenom":result[2],
+            "Email":result[3],
+            "role":result[4]
+          }
+        
+        request.session["user"]=S
 
-    if not Email or not password: 
-        request.session["error"] = "veuillez remplir tout les champs svp"
+        return RedirectResponse(url='/dashboard',status_code=302)
+
+
+    else:
+        request.session["error"]="email introuvable"
         return RedirectResponse(url='/login', status_code=302)
-    return templates.TemplateResponse("login.html",{"request":request})
 
+    
 
 @app.get("/dashboard")
 async def dashboard(session: SessionDep, request:Request):
-
-    return templates.TemplateResponse("dashboard.html",{"request":request})
- 
+    User=request.session.get("user")
+    result=all_appartement(session) 
     
 
+
+    return templates.TemplateResponse("dashboard.html",{"request":request, "U":User, "A":result})
+ 
+#ajouter un appartement 
+
+
+@app.post("/add_App")
+async def add_App(session:SessionDep ,request:Request,N_App:str=Form(...),etage:str=Form(...),Superficie: str=Form(...),type:str=Form(),status:str=Form(...)):
+
+    User=request.session.get("user")
+
+    sql = text("INSERT INTO Appartement (N_App, etage, Superficie, type, status) VALUES (:N_App, :etage, :Superficie, :type, :status)")
+
+    params = {
+        "N_App": N_App,
+        "etage": etage,
+        "Superficie": Superficie,
+        "type": type,
+        "status": status
+            }
+
+    session.execute(sql, params)
+    session.commit()  
+
+
+    return templates.TemplateResponse("dashboard.html",{"request":request, "U":User})
+
+# modifier un appartement 
+@app.post("/update_App")
+async def update_App(session:SessionDep ,request:Request,N_App:str=Form(...),etage:str=Form(...),Superficie: str=Form(...),type:str=Form(),status:str=Form(...)):
+
+    User=request.session.get("user")
+    sql = text("UPDATE Appartement SET etage = :etage, Superficie = :Superficie, type = :type, status = :status WHERE N_App = :N_App")
+
+    params = {
+    "N_App": N_App,
+    "etage": etage,
+    "Superficie": Superficie,
+    "type": type,
+    "status": status
+    }
+
+    session.execute(sql, params)
+    session.commit()
+
+    return templates.TemplateResponse("dashboard.html",{"request":request, "U":User})
+
+
+
+
+
+
+
+
+
+
+
+
+@app.get("/logout")
+async def logout(request:Request):
+    response=RedirectResponse(url='/')
+    request.session.clear()
+    return response
 
    
 

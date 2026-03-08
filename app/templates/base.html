@@ -336,7 +336,10 @@
 
     <!-- Navigation -->
     <nav class="header-nav">
-      <!-- <a href="/dashboard" class="active"><i class="bi bi-speedometer2"></i> Tableau de bord</a> -->
+      {%if U%}
+      <a href="/dashboard" class="active"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
+      
+      {%endif%}
       <!-- <a href="/immeubles"><i class="bi bi-building-fill"></i> Immeubles</a>
       <a href="/locataires"><i class="bi bi-people-fill"></i> Locataires</a>
       <a href="/paiements"><i class="bi bi-cash-coin"></i> Paiements</a> -->
@@ -351,12 +354,24 @@
       <a href="#" class="hdr-icon">
         <i class="bi bi-envelope-fill"></i>
       </a> -->
+      {%if U %}
+      
+
+       <div class="user-pill">
+        <div class="user-ava">T-I</div>
+      <a href="/logout"><span>deconnexion</span> </a>
+
+      </div>
+      {%else%}
+
+      
       <div class="user-pill">
-        <div class="user-ava">MA</div>
+        <div class="user-ava">T-I</div>
       <a href="/login"><span>connexion</span> </a>
 
         <!-- <span>Connexion</span> -->
       </div>
+      {%endif%}
     </div>
 
     <!-- Hamburger mobile -->
