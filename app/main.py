@@ -139,12 +139,13 @@ async def add_App(session:SessionDep ,request:Request,N_App:str=Form(...),etage:
 
 # modifier un appartement 
 @app.post("/update_App")
-async def update_App(session:SessionDep ,request:Request,N_App:str=Form(...),etage:str=Form(...),Superficie: str=Form(...),type:str=Form(),status:str=Form(...)):
+async def update_App(session:SessionDep ,request:Request,id_App:str=Form(...),N_App:str=Form(...),etage:str=Form(...),Superficie: str=Form(...),type:str=Form(),status:str=Form(...)):
 
     User=request.session.get("user")
-    sql = text("UPDATE Appartement SET etage = :etage, Superficie = :Superficie, type = :type, status = :status WHERE N_App = :N_App")
+    sql = text("UPDATE Appartement SET etage = :etage, Superficie = :Superficie, type = :type, status = :status WHERE id_App = :id_App")
 
     params = {
+    "id_App":id_App,
     "N_App": N_App,
     "etage": etage,
     "Superficie": Superficie,
@@ -161,7 +162,7 @@ async def update_App(session:SessionDep ,request:Request,N_App:str=Form(...),eta
 @app.get("/delete_App/{id_App}")
 async def delete_App(session:SessionDep, request:Request, id_App:str):
 
-    print(id_App)
+    print('id est ',id_App)
     user=request.session.get("user")
     del_Appartement(session,id_App)
 

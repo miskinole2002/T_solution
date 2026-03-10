@@ -383,15 +383,17 @@
         </div>
         <table class="data-table" id="tbl-apt">
           <thead>
-            <tr><th>N° App.</th><th>Étage</th><th>Superficie</th><th>Type</th><th>Loyer</th><th>Statut</th><th>Actions</th></tr>
+            <tr><th>N° App.</th><th>Étage</th><th>Superficie</th><th>Type</th><th>Statut</th><th>Actions</th></tr>
           </thead>
           <tbody>
             {%for item in A%}
             
-            <tr><td><strong>{{item[1]}}</strong></td><td>{{item[4]}}</td><td>{{item[2]}}m²</td><td>{{item[2]}}</td><td>950 $</td><td> {%if item[5]=="Occupé"%} <span class="badge bg-gold">{{item[5]}}</span>{%else%} <span class="badge bg-green">{{item[5]}}</span>{%endif%}</td>
+            <tr><td><strong>{{item[1]}}</strong></td><td>{{item[4]}}</td><td>{{item[2]}}m²</td><td>{{item[3]}}</td><td> {%if item[5]=="Occupé"%} <span class="badge bg-gold">{{item[5]}}</span>{%else%} <span class="badge bg-green">{{item[5]}}</span>{%endif%}</td>
               <td class="t-actions">
-                <button class="btn btn-outline btn-sm" onclick="openModal('modal-edit-apt')"><i class="bi bi-pencil-fill"></i> Modifier</button>
-                <button class="btn btn-danger btn-sm" onclick="confirmDelete('L appartement  {{item[1]}}','delete_App','{{item[1]}}')"><i class="bi bi-trash-fill"></i></button>
+                <!-- <button class="btn btn-outline btn-sm" onclick="openModal('modal-edit-apt')"><i class="bi bi-pencil-fill"></i> Modifier</button> -->
+                <button class="btn btn-outline btn-sm" onclick="openEditModalApp('{{item[0]}}','{{item[1]}}','{{item[4]}}','{{item[2]}}','{{item[3]}}','{{item[5]}}')"><i class="bi bi-pencil-fill"></i> Modifier</button>
+
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete('L appartement  {{item[1]}}','delete_App','{{item[0]}}')"><i class="bi bi-trash-fill"></i></button>
               </td></tr>
               {%endfor%}
           </tbody>
@@ -672,17 +674,20 @@
     </div>
     <form method="post" action="/update_App">
     <div class="modal-body">
+      <input type="hidden" id="edit-id" name="id_App">
       <div class="field-row">
-        <div class="field"><label>N° Appartement</label><div class="inp-wrap"><i class="bi bi-door-open"></i><input name="N_App" class="inp" type="text" value="301"/></div></div>
-        <div class="field"><label>Étage</label><div class="inp-wrap"><i class="bi bi-building"></i><input name="etage" class="inp" type="text" value="3ème"/></div></div>
+        <div class="field"><label>N° Appartement</label><div class="inp-wrap"><i class="bi bi-door-open"></i><input id="edit-N_App" name="N_App" class="inp" type="text" /></div></div>
+        <div class="field"><label>Étage</label><div class="inp-wrap"><i class="bi bi-building"></i><input id="edit-etage" name="etage" class="inp" type="text" /></div></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Superficie (m²)</label><div class="inp-wrap"><i class="bi bi-rulers"></i><input name="Superficie" class="inp" type="number" value="90"/></div></div>
-        <div class="field"><label>Type</label><select class="inp inp-bare" name="type"><option>T1</option><option>T2</option><option selected>T3</option><option>T4</option></select></div>
+        <div class="field"><label>Superficie (m²)</label><div class="inp-wrap"><i class="bi bi-rulers"></i><input id="edit-Superficie" name="Superficie" class="inp" type="number"  /></div></div>
+
+        <div class="field"><label>Type</label><select id="edit-type" class="inp inp-bare" name="type"><option>T1</option><option>T2</option><option>T3</option><option>T4</option></select></div>
       </div>
+
       <div class="field-row">
         <!-- <div class="field"><label>Loyer ($)</label><div class="inp-wrap"><i class="bi bi-cash-coin"></i><input class="inp" type="number" value="1250"/></div></div> -->
-        <div class="field"><label>Statut</label><select class="inp inp-bare" name="status" ><option>Disponible</option><option selected>Occupé</option></select></div>
+        <div class="field"><label>Statut</label><select id="edit-status" class="inp inp-bare" name="status" ><option>Disponible</option><option >Occupé</option></select></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -929,6 +934,19 @@
   
 function closeAlert(id) {
   document.getElementById(id).style.display = 'none';
+}
+
+function openEditModalApp(id, N_App, etage, Superficie, type, status) {
+  
+  
+
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-N_App').value = N_App;
+  document.getElementById('edit-etage').value = etage;
+  document.getElementById('edit-Superficie').value = Superficie;
+  document.getElementById('edit-type').value = type;
+  document.getElementById('edit-status').value = status;
+  openModal('modal-edit-apt');
 }
 
 </script>
