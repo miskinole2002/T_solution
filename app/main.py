@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from .models import Appartements,User,Locataire
 import sys,os
 from sqlmodel import SQLModel,create_engine,Session
-from .function import password_hash,password_verify,all_appartement
+from .function import password_hash,password_verify,all_appartement,appartement_one,del_Appartement
 from starlette.middleware.sessions import SessionMiddleware 
 
 
@@ -32,15 +32,6 @@ def get_session():
 SessionDep=Annotated[Session,Depends(get_session)]
 
 
-
-# x=SessionDep.execute(select(User)).all()
-#     print(x)
-#   sql =text("SELECT * FROM Appartement")
-#     x=session.execute(sql)
-
-#     users = x.fetchall()
-
-#     print(users)
 
 @app.get("/")
 async def home_page(session: SessionDep, request:Request):
@@ -96,8 +87,11 @@ async def home_page(session: SessionDep, request:Request,email:str=Form(...), pa
 @app.get("/dashboard")
 async def dashboard(session: SessionDep, request:Request):
     User=request.session.get("user")
+    error=request.session.get("error",None)
     result=all_appartement(session) 
-    
+    if error:
+        return templates.TemplateResponse("dashboard.html",{"request":request, "U":User, "A":result,"error":error})
+
 
 
     return templates.TemplateResponse("dashboard.html",{"request":request, "U":User, "A":result})
@@ -106,25 +100,42 @@ async def dashboard(session: SessionDep, request:Request):
 
 
 @app.post("/add_App")
-async def add_App(session:SessionDep ,request:Request,N_App:str=Form(...),etage:str=Form(...),Superficie: str=Form(...),type:str=Form(),status:str=Form(...)):
+async def add_App(session:SessionDep ,request:Request,N_App:str=Form(...),etage:str=Form(...),Superficie: str=Form(...),type:str=Form(...),status:str=Form(...)):
 
     User=request.session.get("user")
-
-    sql = text("INSERT INTO Appartement (N_App, etage, Superficie, type, status) VALUES (:N_App, :etage, :Superficie, :type, :status)")
-
-    params = {
-        "N_App": N_App,
-        "etage": etage,
-        "Superficie": Superficie,
-        "type": type,
-        "status": status
-            }
-
-    session.execute(sql, params)
-    session.commit()  
+    if not N_App or not etage or not Superficie or not type or not status:
+        request.session["error"] = "assurez vous que tous les champs soient remplis svp "
 
 
-    return templates.TemplateResponse("dashboard.html",{"request":request, "U":User})
+        r=appartement_one(session,N_App)
+
+        if r:
+            request.session["error"] = "cet Appartement a deja ete enregistre  "
+
+            print("l'appartement existe ")
+            return RedirectResponse(url='/dashboard',status_code=302)
+
+
+
+        else:
+            
+            sql = text("INSERT INTO Appartement (N_App, etage, Superficie, type, status) VALUES (:N_App, :etage, :Superficie, :type, :status)")
+
+            params = {
+                "N_App": N_App,
+                "etage": etage,
+                "Superficie": Superficie,
+                "type": type,
+                "status": status
+                    }
+
+            session.execute(sql, params)
+            session.commit()  
+            return RedirectResponse(url='/dashboard',status_code=302)
+
+
+    return RedirectResponse(url='/dashboard',status_code=302)
+
 
 # modifier un appartement 
 @app.post("/update_App")
@@ -144,7 +155,22 @@ async def update_App(session:SessionDep ,request:Request,N_App:str=Form(...),eta
     session.execute(sql, params)
     session.commit()
 
-    return templates.TemplateResponse("dashboard.html",{"request":request, "U":User})
+    return RedirectResponse(url='/dashboard',status_code=302)
+
+#delete un appartement 
+@app.get("/delete_App/{id_App}")
+async def delete_App(session:SessionDep, request:Request, id_App:str):
+
+    print(id_App)
+    user=request.session.get("user")
+    del_Appartement(session,id_App)
+
+    return RedirectResponse(url='/dashboard',status_code=302)
+
+
+
+
+
 
 
 
