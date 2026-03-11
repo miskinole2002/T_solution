@@ -1,201 +1,214 @@
-from fastapi import FastAPI,Request,Depends,Form
+from fastapi import FastAPI, Request, Depends, Form
 from typing import Annotated
 from sqlalchemy import text
 import uvicorn
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from .models import Appartements,User,Locataire
-import sys,os
-from sqlmodel import SQLModel,create_engine,Session
-from .function import password_hash,password_verify,all_appartement,appartement_one,del_Appartement
-from starlette.middleware.sessions import SessionMiddleware 
+from .models import Appartements, User, Locataire
+import sys, os
+from sqlmodel import SQLModel, create_engine, Session
+from .function import (
+    password_hash,
+    password_verify,
+    Add_appartement,
+    all_appartement,
+    appartement_one,
+    del_Appartement,
+    upd_Appartement_one,
+    update_Appartement,
+    all_Locataires,
+    Locataire_one,
+    Add_Locataires
+    
+)
+from starlette.middleware.sessions import SessionMiddleware
 
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-app=FastAPI()
-templates_dir= os.path.abspath(os.path.join(os.path.dirname(__file__),"templates"))
-templates=Jinja2Templates(directory=templates_dir)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+app = FastAPI()
+templates_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "templates"))
+templates = Jinja2Templates(directory=templates_dir)
 
-app.add_middleware(SessionMiddleware,secret_key="1234")
+app.add_middleware(SessionMiddleware, secret_key="1234")
 
-#connection a la base de donne sql server
+# connection a la base de donne sql server
 
-url="mssql+pyodbc://(LocalDB)\\MSSQLLocalDB/Tsolution?driver=ODBC+Driver+17+for+SQL+Server" 
-engine= create_engine(url)
+url = "mssql+pyodbc://(LocalDB)\\MSSQLLocalDB/Tsolution?driver=ODBC+Driver+17+for+SQL+Server"
+engine = create_engine(url)
 
-#ouvre et ferme automatique une session de la BD
+
+# ouvre et ferme automatique une session de la BD
 def get_session():
-     with Session(engine) as session:
-          yield session 
+    with Session(engine) as session:
+        yield session
 
-SessionDep=Annotated[Session,Depends(get_session)]
 
+SessionDep = Annotated[Session, Depends(get_session)]
 
 
 @app.get("/")
-async def home_page(session: SessionDep, request:Request):
-    User=request.session.get("user")
+async def home_page(session: SessionDep, request: Request):
+    User = request.session.get("user")
     if User:
-        return templates.TemplateResponse("home.html",{"request":request,"U":User})
-  
-    return templates.TemplateResponse("home.html",{"request":request})
+        return templates.TemplateResponse("home.html", {"request": request, "U": User})
 
-#connexion
+    return templates.TemplateResponse("home.html", {"request": request})
+
+
+# connexion
 @app.get("/login")
-async def home_page(request:Request):
-    error= request.session.get('error',None)
-    if error :
-        return templates.TemplateResponse("login.html",{"request":request, "error":error})
+async def home_page(request: Request):
+    error = request.session.get("error", None)
+    if error:
+        return templates.TemplateResponse(
+            "login.html", {"request": request, "error": error}
+        )
 
-    return templates.TemplateResponse("login.html",{"request":request})
+    return templates.TemplateResponse("login.html", {"request": request})
+
 
 @app.post("/login")
-async def home_page(session: SessionDep, request:Request,email:str=Form(...), password:str=Form(...) ):
-     
-    # if not email or not password: 
+async def home_page(
+    session: SessionDep,
+    request: Request,
+    email: str = Form(...),
+    password: str = Form(...),
+):
+
+    # if not email or not password:
     #     request.session["error"] = "veuillez remplir tout les champs svp"
     #     return RedirectResponse(url='/login', status_code=302)
-    
-    sql=text("select* from Users where email=:email")
-    params={"email":email}
-    cursor=session.execute(sql,params)
-    result=cursor.fetchone()
-    
+
+    sql = text("select* from Users where email=:email")
+    params = {"email": email}
+    cursor = session.execute(sql, params)
+    result = cursor.fetchone()
+
     if result:
-       
         # R= password_verify(password,result[1])
-        S={
-            "user_id":result[0],
-            "nom":result[1],
-            "prenom":result[2],
-            "Email":result[3],
-            "role":result[4]
-          }
-        
-        request.session["user"]=S
+        S = {
+            "user_id": result[0],
+            "nom": result[1],
+            "prenom": result[2],
+            "Email": result[3],
+            "role": result[4],
+        }
+        request.session["user"] = S
 
-        return RedirectResponse(url='/dashboard',status_code=302)
-
+        return RedirectResponse(url="/dashboard", status_code=302)
 
     else:
-        request.session["error"]="email introuvable"
-        return RedirectResponse(url='/login', status_code=302)
+        request.session["error"] = "email introuvable"
+        return RedirectResponse(url="/login", status_code=302)
 
-    
 
 @app.get("/dashboard")
-async def dashboard(session: SessionDep, request:Request):
-    User=request.session.get("user")
-    error=request.session.get("error",None)
-    result=all_appartement(session) 
+async def dashboard(session: SessionDep, request: Request):
+    User = request.session.get("user")
+    error = request.session.get("error", None)
+    result = all_appartement(session) # retourne un tableau de tous les appartements 
+    result_locataire=all_Locataires(session) # retourne un tableau de tous les locataires
+    # print(result_locataire)
+    # print(result)
+    print(error)
     if error:
-        return templates.TemplateResponse("dashboard.html",{"request":request, "U":User, "A":result,"error":error})
+        return templates.TemplateResponse(
+            "dashboard.html",
+            {"request": request, "U": User, "A": result, "error": error},
+        )
 
+    return templates.TemplateResponse(
+        "dashboard.html", {"request": request, "U": User,"B": result_locataire, "A": result}
+    )
 
-
-    return templates.TemplateResponse("dashboard.html",{"request":request, "U":User, "A":result})
- 
-#ajouter un appartement 
-
+# ajouter un appartement
 
 @app.post("/add_App")
-async def add_App(session:SessionDep ,request:Request,N_App:str=Form(...),etage:str=Form(...),Superficie: str=Form(...),type:str=Form(...),status:str=Form(...)):
+async def add_App(
+    session: SessionDep,
+    request: Request,
+    N_App: str = Form(...),
+    etage: str = Form(...),
+    Superficie: str = Form(...),
+    type: str = Form(...),
+    status: str = Form(...),):
 
-    User=request.session.get("user")
+    User = request.session.get("user")
     if not N_App or not etage or not Superficie or not type or not status:
-        request.session["error"] = "assurez vous que tous les champs soient remplis svp "
-
-
-        r=appartement_one(session,N_App)
-
+        request.session["error"] = (
+            "assurez vous que tous les champs soient remplis svp "
+        )
+        return RedirectResponse(url="/dashboard", status_code=302)
+    else:
+        r = appartement_one(session, N_App)
         if r:
             request.session["error"] = "cet Appartement a deja ete enregistre  "
-
-            print("l'appartement existe ")
-            return RedirectResponse(url='/dashboard',status_code=302)
-
-
+            return RedirectResponse(url="/dashboard", status_code=302)
 
         else:
-            
-            sql = text("INSERT INTO Appartement (N_App, etage, Superficie, type, status) VALUES (:N_App, :etage, :Superficie, :type, :status)")
+            Add_appartement(session,N_App,etage,Superficie,type,status)
+            return RedirectResponse(url="/dashboard", status_code=302)
 
-            params = {
-                "N_App": N_App,
-                "etage": etage,
-                "Superficie": Superficie,
-                "type": type,
-                "status": status
-                    }
-
-            session.execute(sql, params)
-            session.commit()  
-            return RedirectResponse(url='/dashboard',status_code=302)
+   
 
 
-    return RedirectResponse(url='/dashboard',status_code=302)
-
-
-# modifier un appartement 
+# modifier un appartement
 @app.post("/update_App")
-async def update_App(session:SessionDep ,request:Request,id_App:str=Form(...),N_App:str=Form(...),etage:str=Form(...),Superficie: str=Form(...),type:str=Form(),status:str=Form(...)):
+async def update_App(
+    session: SessionDep,
+    request: Request,
+    id_App: str = Form(...),
+    N_App: str = Form(...),
+    etage: str = Form(...),
+    Superficie: str = Form(...),
+    type: str = Form(),
+    status: str = Form(...),
+):
+    
+    User = request.session.get("user")
+    update_Appartement(session,id_App,N_App,etage,Superficie,type,status,)  
+    return RedirectResponse(url="/dashboard", status_code=302)
 
-    User=request.session.get("user")
-    sql = text("UPDATE Appartement SET etage = :etage, Superficie = :Superficie, type = :type, status = :status WHERE id_App = :id_App")
-
-    params = {
-    "id_App":id_App,
-    "N_App": N_App,
-    "etage": etage,
-    "Superficie": Superficie,
-    "type": type,
-    "status": status
-    }
-
-    session.execute(sql, params)
-    session.commit()
-
-    return RedirectResponse(url='/dashboard',status_code=302)
-
-#delete un appartement 
+#delete un Appartement
 @app.get("/delete_App/{id_App}")
-async def delete_App(session:SessionDep, request:Request, id_App:str):
+async def delete_App(session: SessionDep, request: Request, id_App: str):
 
-    print('id est ',id_App)
-    user=request.session.get("user")
-    del_Appartement(session,id_App)
+    user = request.session.get("user")
+    print(id_App)
+    upd_Appartement_one(session,id_App)
 
-    return RedirectResponse(url='/dashboard',status_code=302)
+    return RedirectResponse(url="/dashboard", status_code=302)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#ajouter un locataire 
+@app.post("/add_locataire")
+async def add_locataire(session:SessionDep, request:Request,Nom:str=Form(...),
+            
+      Prenom:str=Form(...),
+      Tel:str=Form(...),
+      Email:str=Form(...),
+      NumeroRue:str=Form(None),
+      Rue:str=Form(None),
+      NumeroApp:str=Form(None),
+      ville:str=Form(None),
+      province:str=Form(None),
+      code:str=Form(None)
+ ):
+        
+        result=Locataire_one(session,Email)
+        if result:
+            request.session["error"] = "ce Locataire a deja ete enregistre  "
+            return RedirectResponse(url="/dashboard", status_code=302)
+        else:
+            Add_Locataires(session,Nom,Prenom, Tel,Email,NumeroRue,Rue,NumeroApp,ville,province,code)
+        return RedirectResponse(url="/dashboard", status_code=302)
 
 @app.get("/logout")
-async def logout(request:Request):
-    response=RedirectResponse(url='/')
+async def logout(request: Request):
+    response = RedirectResponse(url="/")
     request.session.clear()
     return response
 
-   
 
-   
-
-   
-    
-
-if __name__=="__main__":
-    uvicorn.run(app,host='0.0.0.0',port=8001, workers=1)
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8001, workers=1)
