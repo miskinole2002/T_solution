@@ -503,11 +503,12 @@
     background: rgba(11, 31, 58, 0.5);
     z-index: 2000;
     backdrop-filter: blur(5px);
-    align-items: center;
-    justify-content: center;
+   
   }
   .modal-overlay.open {
     display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .modal-box {
@@ -780,10 +781,12 @@
             oninput="filterTable(this, 'tbl-loc')"
           />
         </div>
-        
+        <div style="overflow-x: auto;">
         <table class="data-table" id="tbl-loc">
           <thead>
             <tr>
+              
+
               <th>Locataire</th>
               <th>Téléphone</th>
               <th>Email</th>
@@ -792,7 +795,9 @@
               <th>Ville</th>
               <th>Province</th>
               <th>code postal</th>
-              <th>Action</th>
+              <th>No Appartement</th>
+
+              <th style="position: sticky; right: 0; background: #fff;">Action</th>
 
 
 
@@ -804,6 +809,7 @@
           <tbody>
             {%for item in B %}
             <tr>
+              
               <td>
                 <div style="display: flex; align-items: center; gap: 10px">
                   <!-- <div class="avatar av1">KD</div> -->
@@ -814,19 +820,21 @@
               <td>{{item[4]}}</td>
               <td>{{item[5]}}</td>
               <td>{{item[6]}}</td>
-              <td>{{item[7]}}</td>
               <td>{{item[8]}}</td>
               <td>{{item[9]}}</td>
-              <td class="t-actions">
+              <td>{{item[10]}}</td>
+              <td>{{item[7]}}</td>
+
+              <td class="t-actions" style="position: sticky; right: 0; background: #fff;">
                 <button
                   class="btn btn-outline btn-sm"
-                  onclick="openModal('modal-edit-loc')"
+                  onclick="openEditModalLoc('{{item[0]}}', '{{item[2]}}','{{item[1]}}','{{item[3]}}','{{item[4]}}','{{item[5]}}','{{item[6]}}','{{item[7]}}','{{item[8]}}','{{item[9]}}','{{item[10]}}')"
                 >
                   <i class="bi bi-pencil-fill"></i> Modifier
                 </button>
                 <button
                   class="btn btn-danger btn-sm"
-                  onclick="confirmDelete('Karim Dubois')"
+                  onclick="confirmDelete('{{item[2]}}','delete_Loc','{{item[0]}}')"
                 >
                   <i class="bi bi-trash-fill"></i>
                 </button>
@@ -836,6 +844,7 @@
         
           </tbody>
         </table>
+        </div>
       </div>
     </div>
 
@@ -1206,6 +1215,7 @@
                 type="number"
                 placeholder="75"
                 name="Superficie"
+                min="0"
               />
             </div>
           </div>
@@ -1285,6 +1295,7 @@
                 name="Superficie"
                 class="inp"
                 type="number"
+                min="0"
               />
             </div>
           </div>
@@ -1373,7 +1384,7 @@
        <div class="field">
           <label>Numero rue</label>
           <div class="inp-wrap">
-           <input class="inp" type="number" placeholder="ex 3560" name="NumeroRue"/>
+           <input class="inp" type="number" placeholder="ex 3560" min="0" name="NumeroRue"/>
           </div>
         </div>
         <div class="field">
@@ -1385,7 +1396,7 @@
         <div class="field">
           <label>Numero Appartement</label>
           <div class="inp-wrap">
-           <input class="inp" type="number" placeholder="ex 301" name="NumeroApp"/>
+           <input class="inp" type="number" placeholder="ex 301" min="0" name="NumeroApp"/>
           </div>
         </div>
           <div class="field">
@@ -1412,7 +1423,6 @@
           <option>Terre-Neuve-et-Labrador</option>
           <option>Territoires du Nord-Ouest</option>
           <option>Yukon</option>
-
         </select>
       </div>
          <div class="field">
@@ -1449,53 +1459,108 @@
         <i class="bi bi-x-lg"></i>
       </button>
     </div>
+    <form action="/update_locataire" method="post">
     <div class="modal-body">
+      <input class="inp" type="hidden" name="id" id="edit-id_loc"  />
+      
       <div class="field-row">
         <div class="field">
           <label>Prénom</label>
           <div class="inp-wrap">
             <i class="bi bi-person-fill"></i
-            ><input class="inp" type="text" value="Karim" />
+            ><input class="inp" type="text" name="Prenom" id="edit-Prenom"  />
           </div>
         </div>
         <div class="field">
           <label>Nom</label>
           <div class="inp-wrap">
             <i class="bi bi-person-fill"></i
-            ><input class="inp" type="text" value="Dubois" />
+            ><input class="inp" type="text" value="" name="Nom" id="edit-Nom"/>
           </div>
         </div>
       </div>
-      <div class="field">
+      <div class="field-row">
+        <div class="field">
         <label>Email</label>
         <div class="inp-wrap">
           <i class="bi bi-envelope-fill"></i
-          ><input class="inp" type="email" value="karim@email.com" />
+          ><input class="inp" type="email" value="" name="Email" id="edit-Email" />
         </div>
       </div>
       <div class="field">
         <label>Téléphone</label>
         <div class="inp-wrap">
           <i class="bi bi-telephone-fill"></i
-          ><input class="inp" type="tel" value="514-111-2233" />
+          ><input class="inp" type="tel" value="" name="Tel" id="edit-Tel" />
+        </div>
+      </div>
+      </div>
+      <div class="field-row">
+      <div class="field">
+        <label>No</label>
+        <div class="inp-wrap">
+          <input class="inp" type="number" min="0" value=""  name="NumeroRue" id="edit-NumeroRue" />
+        </div>
+      </div>
+        <div class="field">
+        <label>Rue</label>
+        <div class="inp-wrap">
+         <input class="inp" type="text" value=""  name="Rue"  id="edit-Rue"/>
+        </div>
+      </div>
+        
+      </div>
+      <div class="field-row">
+          <div class="field">
+        <label>ville</label>
+        <div class="inp-wrap">
+         <input class="inp" type="text" value="" mi name="ville" id="edit-ville" />
         </div>
       </div>
       <div class="field">
-        <label>Appartement</label>
-        <select class="inp inp-bare">
-          <option selected>App. 301</option>
-          <option>App. 201</option>
+        <label>Province</label>
+        <select class="inp inp-bare" name="province" id="edit-province">
+          <option>-- Choisir --</option>
+          <option>Alberta</option>
+          <option>Colombie-Britannique</option>
+          <option>ile-du-Prince-Edouard</option>
+          <option>Manitoba</option>
+          <option>Nouveau-Brunswick</option>
+          <option>Nouvelle-Ecosse</option>
+          <option>Nunavut</option>
+          <option>Ontario</option>
+          <option>Quebec</option>
+          <option>Saskatchewan</option>
+          <option>Terre-Neuve-et-Labrador</option>
+          <option>Territoires du Nord-Ouest</option>
+          <option>Yukon</option>
         </select>
       </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+        <label>Code Postal</label>
+        <div class="inp-wrap">
+         <input class="inp" type="text" value=""  name="code" id="edit-code"/>
+        </div>
+      </div>
+       <div class="field">
+          <label>Numero Appartement</label>
+          <div class="inp-wrap">
+           <input class="inp" type="number" placeholder="" min="0" name="NumeroApp" id="edit-NumeroApp"/>
+          </div>
+        </div>
+    </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-edit-loc')">
+      <button type="button" class="btn btn-outline" onclick="closeModal('modal-edit-loc')">
         Annuler
       </button>
       <button class="btn btn-gold">
         <i class="bi bi-check-lg"></i> Mettre à jour
       </button>
     </div>
+    </form>
   </div>
 </div>
 
@@ -1902,6 +1967,26 @@
     document.getElementById("edit-type").value = type;
     document.getElementById("edit-status").value = status;
     openModal("modal-edit-apt");
+  }
+  
+  function openEditModalLoc(id,Nom,Prenom, Tel,Email,NumeroRue,Rue,NumeroApp,ville,province,code) {
+    alert(id)
+    console.log("element:", document.getElementById("edit-id"));
+    document.getElementById("edit-id_loc").value = id;
+    document.getElementById("edit-Nom").value = Nom;
+    document.getElementById("edit-Prenom").value = Prenom;
+    document.getElementById("edit-Tel").value = Tel;
+    document.getElementById("edit-Email").value = Email;
+    document.getElementById("edit-Rue").value =Rue;
+    document.getElementById("edit-NumeroRue").value = NumeroRue;
+    document.getElementById("edit-NumeroApp").value = NumeroApp;
+    document.getElementById("edit-ville").value = ville;
+    document.getElementById("edit-province").value = province;
+    document.getElementById("edit-code").value = code;
+    
+
+
+    openModal("modal-edit-loc");
   }
 </script>
 

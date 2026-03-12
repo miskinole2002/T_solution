@@ -19,7 +19,9 @@ from .function import (
     update_Appartement,
     all_Locataires,
     Locataire_one,
-    Add_Locataires
+    Add_Locataires,
+    locataire_Update,
+    upd_locataire_one
     
 )
 from starlette.middleware.sessions import SessionMiddleware
@@ -111,7 +113,7 @@ async def dashboard(session: SessionDep, request: Request):
     result_locataire=all_Locataires(session) # retourne un tableau de tous les locataires
     # print(result_locataire)
     # print(result)
-    print(error)
+    
     if error:
         return templates.TemplateResponse(
             "dashboard.html",
@@ -175,7 +177,7 @@ async def update_App(
 async def delete_App(session: SessionDep, request: Request, id_App: str):
 
     user = request.session.get("user")
-    print(id_App)
+   
     upd_Appartement_one(session,id_App)
 
     return RedirectResponse(url="/dashboard", status_code=302)
@@ -202,6 +204,36 @@ async def add_locataire(session:SessionDep, request:Request,Nom:str=Form(...),
         else:
             Add_Locataires(session,Nom,Prenom, Tel,Email,NumeroRue,Rue,NumeroApp,ville,province,code)
         return RedirectResponse(url="/dashboard", status_code=302)
+#modifier un locataire
+@app.post("/update_locataire")
+async def update_locataire(session:SessionDep, request:Request,id:str=Form(...),Nom:str=Form(...),
+            
+      Prenom:str=Form(...),
+      Tel:str=Form(...),
+      Email:str=Form(...),
+      NumeroRue:str=Form(None),
+      Rue:str=Form(None),
+      NumeroApp:str=Form(None),
+      ville:str=Form(None),
+      province:str=Form(None),
+      code:str=Form(None)
+ ):
+    
+    locataire_Update(session,id,Nom,Prenom,Tel,Email,NumeroRue,Rue,NumeroApp,ville,province,code)
+
+    return RedirectResponse(url="/dashboard", status_code=302)
+
+
+#delete un Locataire
+@app.get("/delete_Loc/{id}")
+async def delete_App(session: SessionDep, request: Request, id: str):
+
+    user = request.session.get("user")
+    # print(id_App)
+    upd_locataire_one(session,id)
+
+    return RedirectResponse(url="/dashboard", status_code=302)
+
 
 @app.get("/logout")
 async def logout(request: Request):

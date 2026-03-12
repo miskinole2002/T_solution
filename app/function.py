@@ -34,7 +34,6 @@ def all_appartement(session):
     sql=text("select* from Appartement") 
     cursor=session.execute(sql)
     result=cursor.fetchall()
-
     return result
 
 #selectionne un appartement 
@@ -42,7 +41,7 @@ def appartement_one(session,Numero):
      
     sql=text("select* from Appartement where N_App=:N_App")
     params={"N_App":Numero}
-    cursor=session.execute(sql,params)
+    cursor=session.exec(sql,params=params)
     result=cursor.fetchone()
     return result
 
@@ -86,15 +85,18 @@ def update_Appartement(session, id,N_App,etage,Superficie,type,status):
 # selectionner tous les locataires 
 def all_Locataires(session):
 
-    sql=text("select* from Locataires") 
-    cursor=session.execute(sql)
+    sql=text("select* from Locataires where is_Delete=:is_Delete") 
+    params={"is_Delete":0}
+    cursor=session.exec(sql,params=params)
     result=cursor.fetchall()
+    print(result)
+
 
     return result
 
 def Add_Locataires(session,Nom,Prenom, Tel,Email,NumeroRue,Rue,NumeroApp,ville,province,code):
          sql = text(
-                "INSERT INTO Locataires (Nom, Prenom,Tel,Email,NumeroRue,Rue,NumeroApp,ville,province,code) VALUES (:Nom, :Prenom,:Tel,:Email,:NumeroRue,:Rue,:NumeroApp,:ville,:province,:code)"
+                "INSERT INTO Locataires (Nom, Prenom,Tel,Email,NumeroRue,Rue,NumeroApp,ville,province,code,is_Delete) VALUES (:Nom, :Prenom,:Tel,:Email,:NumeroRue,:Rue,:NumeroApp,:ville,:province,:code,:is_Delete)"
             )
 
          params = {
@@ -107,7 +109,8 @@ def Add_Locataires(session,Nom,Prenom, Tel,Email,NumeroRue,Rue,NumeroApp,ville,p
                 "NumeroApp":NumeroApp,
                 "ville":ville,
                 "province":province,
-                "code":code
+                "code":code,
+                "is_Delete":0 
             }
         
          session.exec(sql, params=params)
@@ -119,3 +122,41 @@ def Locataire_one(session,email):
     cursor=session.execute(sql,params)
     result=cursor.fetchone()
     return result
+
+#modifier un locataire 
+
+def locataire_Update(session,id,Nom,Prenom,Tel,Email,NumeroRue,Rue,NumeroApp,ville,province,code):
+     
+        sql = text(
+        "UPDATE Locataires SET Nom=:Nom, Prenom = :Prenom, Tel =:Tel, Email = :Email, NumeroRue = :NumeroRue,Rue =:Rue," 
+        " NumeroApp=:NumeroApp,ville=:ville, province=:province, code=:code  WHERE id= :id"
+    )
+
+        params = {
+        "id": id,
+         'Nom':Nom, 
+         'Prenom'  :Prenom, 
+        'Tel':Tel, 
+         "Email"  :Email, 
+         "NumeroRue" :NumeroRue,
+         "Rue" :Rue,
+        "NumeroApp":NumeroApp,
+        "ville":ville, 
+        "province":province, 
+        "code":code
+        }
+        session.exec(sql, params=params)
+        session.commit()
+
+#agir comme un delete mais modifie plutot la colone is delete de notre table
+def upd_locataire_one(session, id):
+    sql = text(
+        "UPDATE Locataires SET is_Delete= :is_Delete WHERE id = :id"
+    )
+
+    params = {
+        "id":id,
+      "is_Delete":"1"
+    }
+    session.exec(sql, params=params)
+    session.commit()
