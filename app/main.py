@@ -21,7 +21,10 @@ from .function import (
     Locataire_one,
     Add_Locataires,
     locataire_Update,
-    upd_locataire_one
+    upd_locataire_one,
+    get_admin_by_Mail,
+    Add_Admin,
+    get_all_admin,get_User_By_Email
     
 )
 from starlette.middleware.sessions import SessionMiddleware
@@ -48,7 +51,6 @@ engine = create_engine(url)
 def get_session():
     with Session(engine) as session:
         yield session
-print()
 
 SessionDep = Annotated[Session, Depends(get_session)]
 
@@ -86,44 +88,49 @@ async def home_page(
     #     request.session["error"] = "veuillez remplir tout les champs svp"
     #     return RedirectResponse(url='/login', status_code=302)
 
-    sql = text("select* from Users where email=:email")
-    params = {"email": email}
-    cursor = session.execute(sql, params)
-    result = cursor.fetchone()
-
+    result=get_User_By_Email(session,email)
+    
     if result:
-        # R= password_verify(password,result[1])
-        S = {
-            "user_id": result[0],
-            "nom": result[1],
-            "prenom": result[2],
-            "Email": result[3],
-            "role": result[4],
-        }
-        request.session["user"] = S
+        R= password_verify(password,result[5])
+        if R:
+            S = {
+                "user_id": result[0],
+                "nom": result[1],
+                "prenom": result[2],
+                "Email": result[3],
+                "role": result[4],
+            }
+            request.session["user"] = S
 
-        return RedirectResponse(url="/dashboard", status_code=302)
+            return RedirectResponse(url="/dashboard", status_code=302)
+        else:
+            
+            return templates.TemplateResponse("login.html", {"request": request, "error": "mot de passe incorect"}
+    )
+
+         
 
     else:
-        request.session["error"] = "email introuvable"
-        return RedirectResponse(url="/login", status_code=302)
+        return templates.TemplateResponse("login.html", {"request": request, "error": "email introuvable"})
+      
 
 
 @app.get("/dashboard")
 async def dashboard(session: SessionDep, request: Request):
     User = request.session.get("user")
-    error = request.session.get("error", None)
+    error = request.session.pop("error", None)
     result = all_appartement(session) # retourne un tableau de tous les appartements 
     result_locataire=all_Locataires(session) # retourne un tableau de tous les locataires
-
+    result_admin=get_all_admin(session)# retourne un tableau d administrateur
+    
     if error:
         return templates.TemplateResponse(
             "dashboard.html",
-            {"request": request, "U": User, "A": result, "error": error},
+            {"request": request, "U": User, "A": result, "error": error,"C":result_admin}
         )
 
     return templates.TemplateResponse(
-        "dashboard.html", {"request": request, "U": User,"B": result_locataire, "A": result}
+        "dashboard.html", {"request": request, "U": User,"B": result_locataire, "A": result,"C":result_admin}
     )
 
 # ajouter un appartement
@@ -251,6 +258,38 @@ async def create_Bail(session:SessionDep, request:Request,
 
     
     return RedirectResponse(url="/dashboard", status_code=302)
+
+#ajouter un administrateur
+@app.post("/add_Admin")
+async def add_Admin(
+    session: SessionDep,
+    request: Request,
+    Nom: str = Form(...),
+    Prenom: str = Form(...),
+    Password: str = Form(...),
+    Email:str=Form(...),
+    Role: str = Form(...),
+    ):
+    print(Role)
+    print(Password)
+
+    User = request.session.get("user")
+    if not Nom or not Prenom or not Password or not Role or not Email:
+        request.session["error"] = (
+            "assurez vous que tous les champs soient remplis svp "
+        )
+        return RedirectResponse(url="/dashboard", _code=302)
+    else:
+        r =get_admin_by_Mail(session, Email)
+        if r:
+            request.session["error"] = "cet utilisateur a deja ete enregistre  "
+            return RedirectResponse(url="/dashboard", status_code=302)
+
+        else:
+            password=password_hash(Password)
+            print(password)
+            Add_Admin(session,Nom,Prenom,Email,Role,password)
+            return RedirectResponse(url="/dashboard", status_code=302)
 
 @app.get("/logout")
 async def logout(request: Request):

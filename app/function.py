@@ -187,3 +187,42 @@ def Bail_Create(session, Nom_Locataire, N_App, date_debut, date_fin, prix,Statut
         
          session.exec(sql, params=params)
          session.commit()
+#ajouter un administrateur
+
+def Add_Admin(session,Nom,Prenom,Email, Role,Password):
+        sql = text(
+                "INSERT INTO Users (Nom, Prenom,Email,Role,Password) VALUES (:Nom, :Prenom,:Email,:Role,:Password)"
+            )
+
+        params = {
+                "Nom": Nom,
+                "Prenom": Prenom,
+                "Email": Email,
+                "Role": Role,
+                "Password":Password
+             
+            }
+        session.exec(sql, params=params)
+        session.commit()
+#avoir un admin en fonction de L'email
+
+def get_admin_by_Mail(session,Email):
+     
+    sql=text("select* from Users where Email=:Email")
+    params={"Email":Email}
+    cursor=session.exec(sql,params=params)
+    result=cursor.fetchone()
+    return result    
+
+def get_all_admin(session):
+    sql=text("select* from Users ")
+    cursor=session.exec(sql)
+    result=cursor.fetchall()
+    return result  
+#avoir un user par son email
+def get_User_By_Email(session,Email):
+    sql = text("select* from Users where email=:email")
+    params = {"email":Email}
+    cursor = session.exec(sql,params=params)
+    result = cursor.fetchone()
+    return result  

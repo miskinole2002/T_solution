@@ -27,11 +27,15 @@
     <button class="sb-link" onclick="showSection('paiements', this)">
       <i class="bi bi-cash-coin"></i> Paiements
     </button>
+    
+    {% if U.role=="1"%}
 
     <div class="sb-lbl">Administration</div>
     <button class="sb-link" onclick="showSection('admins', this)">
       <i class="bi bi-shield-fill"></i> Administrateurs
     </button>
+
+    {%endif%}
   </aside>
 
   <!-- ████ MAIN ████ -->
@@ -454,11 +458,17 @@
     ════════════════════════ -->
     <div class="dash-section" id="section-admins">
       <div class="page-hdr">
+
         <h2><i class="bi bi-shield-fill"></i> Administrateurs</h2>
+
         <button class="btn btn-navy" onclick="openModal('modal-add-admin')">
           <i class="bi bi-person-plus-fill"></i> Ajouter un admin
         </button>
+
+      
+
       </div>
+
       <div class="card">
         <div class="card-head">
           <h3><i class="bi bi-people-fill"></i> Équipe d'administration</h3>
@@ -468,7 +478,7 @@
           <div class="adm-ava av2"></div>
           <div>
             <div class="adm-name">
-              {{U.nom}} &nbsp;<span class="badge bg-gold">Super Admin</span>
+              {{U.nom}} &nbsp;{% if U.Role=="2"%}<span class="badge bg-teal">Administrateur</span>{%else%}<span class="badge bg-gold">Gestionnaire</span>{%endif%}
             </div>
             <div class="adm-email">{{U.Email}}</div>
           </div>
@@ -476,14 +486,15 @@
             <span style="font-size: 0.75rem; color: #96a8bc">Vous</span>
           </div>
         </div>
-
+       
+        {%for item in C %}
         <div class="admin-row">
-          <div class="adm-ava av1">JL</div>
+          <div class="adm-ava av1"></div>
           <div>
             <div class="adm-name">
-              Julie Lefebvre &nbsp;<span class="badge bg-teal">Admin</span>
+            {{item[2]}} &nbsp; {{item[1]}} &nbsp; {% if item[4]=="2"%}<span class="badge bg-teal">Administrateur</span>{%else%}<span class="badge bg-teal">Gestionnaire</span>{%endif%}
             </div>
-            <div class="adm-email">julie@immopro.com</div>
+            <div class="adm-email">{{item[3]}}</div>
           </div>
           <div class="adm-actions">
             <button
@@ -500,34 +511,12 @@
             </button>
           </div>
         </div>
-
-        <div class="admin-row">
-          <div class="adm-ava av5">RB</div>
-          <div>
-            <div class="adm-name">
-              Rachid Bouraoui &nbsp;<span class="badge bg-navy"
-                >Gestionnaire</span
-              >
-            </div>
-            <div class="adm-email">rachid@immopro.com</div>
-          </div>
-          <div class="adm-actions">
-            <button
-              class="btn btn-outline btn-sm"
-              onclick="openModal('modal-edit-admin')"
-            >
-              <i class="bi bi-pencil-fill"></i> Modifier
-            </button>
-            <button
-              class="btn btn-danger btn-sm"
-              onclick="confirmDelete('Rachid Bouraoui')"
-            >
-              <i class="bi bi-trash-fill"></i>
-            </button>
-          </div>
-        </div>
+        {%endfor%}
+       
       </div>
     </div>
+
+
   </div>
   <!-- end dash-main -->
 </div>
@@ -1140,20 +1129,21 @@
         <i class="bi bi-x-lg"></i>
       </button>
     </div>
+    <form action="/add_Admin" method="post">
     <div class="modal-body">
       <div class="field-row">
         <div class="field">
           <label>Prénom</label>
           <div class="inp-wrap">
             <i class="bi bi-person-fill"></i
-            ><input class="inp" type="text" placeholder="Prénom" />
+            ><input class="inp" type="text" placeholder="Prénom" name="Prenom" />
           </div>
         </div>
         <div class="field">
           <label>Nom</label>
           <div class="inp-wrap">
             <i class="bi bi-person-fill"></i
-            ><input class="inp" type="text" placeholder="Nom" />
+            ><input class="inp" type="text" placeholder="Nom" name="Nom"/>
           </div>
         </div>
       </div>
@@ -1161,33 +1151,33 @@
         <label>Email</label>
         <div class="inp-wrap">
           <i class="bi bi-envelope-fill"></i
-          ><input class="inp" type="email" placeholder="admin@immopro.com" />
+          ><input class="inp" type="email" placeholder="admin@immopro.com" name="Email" />
         </div>
       </div>
       <div class="field">
         <label>Mot de passe temporaire</label>
         <div class="inp-wrap">
           <i class="bi bi-lock-fill"></i
-          ><input class="inp" type="password" placeholder="••••••••" />
+          ><input class="inp" type="password" placeholder="••••••••" name="Password"/>
         </div>
       </div>
       <div class="field">
         <label>Rôle</label>
-        <select class="inp inp-bare">
-          <option>Administrateur</option>
-          <option>Gestionnaire</option>
-          <option>Comptable</option>
+        <select class="inp inp-bare" name="Role">
+          <option value="1">Gestionnaire</option>
+          <option value="2">Administrateur</option>
         </select>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-add-admin')">
+      <button type="button" class="btn btn-outline" onclick="closeModal('modal-add-admin')">
         Annuler
       </button>
-      <button class="btn btn-navy">
+      <button type="submit" class="btn btn-navy">
         <i class="bi bi-person-check-fill"></i> Créer le compte
       </button>
     </div>
+    </form>
   </div>
 </div>
 
