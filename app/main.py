@@ -31,6 +31,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 app = FastAPI()
 templates_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "templates"))
 templates = Jinja2Templates(directory=templates_dir)
+#static
+static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),"static"))
+app.mount("/static",StaticFiles(directory=static_dir), name="static")
+
 
 app.add_middleware(SessionMiddleware, secret_key="1234")
 
@@ -44,7 +48,7 @@ engine = create_engine(url)
 def get_session():
     with Session(engine) as session:
         yield session
-
+print()
 
 SessionDep = Annotated[Session, Depends(get_session)]
 
@@ -111,9 +115,7 @@ async def dashboard(session: SessionDep, request: Request):
     error = request.session.get("error", None)
     result = all_appartement(session) # retourne un tableau de tous les appartements 
     result_locataire=all_Locataires(session) # retourne un tableau de tous les locataires
-    # print(result_locataire)
-    # print(result)
-    
+
     if error:
         return templates.TemplateResponse(
             "dashboard.html",
@@ -234,6 +236,21 @@ async def delete_App(session: SessionDep, request: Request, id: str):
 
     return RedirectResponse(url="/dashboard", status_code=302)
 
+#creer un bail
+@app.post("/Create_Bail")
+async def create_Bail(session:SessionDep, request:Request,
+                      Nom_Locataire:str=Form(...),
+                      N_App:str=Form(...),
+                      date_debut:str=Form(...),
+                      date_fin:str=Form(...),
+                      prix:str=Form(...),
+                      Statut:str=Form(...)
+                      ):
+    
+    print(date_debut)
+
+    
+    return RedirectResponse(url="/dashboard", status_code=302)
 
 @app.get("/logout")
 async def logout(request: Request):

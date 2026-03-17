@@ -89,7 +89,7 @@ def all_Locataires(session):
     params={"is_Delete":0}
     cursor=session.exec(sql,params=params)
     result=cursor.fetchall()
-    print(result)
+ 
 
 
     return result
@@ -160,3 +160,30 @@ def upd_locataire_one(session, id):
     }
     session.exec(sql, params=params)
     session.commit()
+
+def get_id_App_by_name():
+      return 
+#creer un Bail
+
+def Bail_Create(session, Nom_Locataire, N_App, date_debut, date_fin, prix,Statut):
+         sql = text(
+                "INSERT INTO Locataires (id,id_App,Nom_Locataire, N_App, date_debut, date_fin, prix,Statut,is_Delete) " \
+                "VALUES (:Nom_Locataire, :N_App, :date_debut, :date_fin, :prix,:Statut,:is_Delete)"
+            )
+
+         params = {
+                "Nom": Nom,
+                "Prenom": Prenom,
+                "Tel": Tel,
+                "Email": Email,
+                "NumeroRue": NumeroRue,
+                "Rue":Rue,
+                "NumeroApp":NumeroApp,
+                "ville":ville,
+                "province":province,
+                "code":code,
+                "is_Delete":0 
+            }
+        
+         session.exec(sql, params=params)
+         session.commit()
