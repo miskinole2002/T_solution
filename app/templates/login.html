@@ -87,6 +87,7 @@
             placeholder="exemple@immopro.com"
             autocomplete="email"
             required
+            value="{{remen_Email}}"
           />
         </div>
       </div>
@@ -113,7 +114,8 @@
       <!-- Remember / Forgot -->
       <div class="form-extras">
         <label class="remember">
-          <input type="checkbox" name="remember"/>
+          <input type="checkbox" name="remenber" value="1"
+          {% if remen_Email %} checked {% endif %} />
           Se souvenir de moi
         </label>
         <a href="/mot-de-passe-oublie" class="forgot-link">Mot de passe oublié ?</a>

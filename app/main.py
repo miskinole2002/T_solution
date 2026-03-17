@@ -67,23 +67,26 @@ async def home_page(session: SessionDep, request: Request):
 # connexion
 @app.get("/login")
 async def home_page(request: Request):
-    error = request.session.get("error", None)
+    error = request.session.pop("error", None)
+    remen_me=request.cookies.get("remen_Email","")
+    print(remen_me)
     if error:
         return templates.TemplateResponse(
             "login.html", {"request": request, "error": error}
         )
 
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse("login.html", {"request": request, "remen_Email":remen_me})
 
 
 @app.post("/login")
-async def home_page(
+async def login(
     session: SessionDep,
     request: Request,
     email: str = Form(...),
     password: str = Form(...),
+    remenber:str=Form(None)
 ):
-
+    
     # if not email or not password:
     #     request.session["error"] = "veuillez remplir tout les champs svp"
     #     return RedirectResponse(url='/login', status_code=302)
@@ -102,7 +105,17 @@ async def home_page(
             }
             request.session["user"] = S
 
-            return RedirectResponse(url="/dashboard", status_code=302)
+            reponse= RedirectResponse(url="/dashboard", status_code=302)
+
+            if remenber:
+               r= reponse.set_cookie(key="remen_Email",value=email,max_age=60*5)
+               print(r)
+            else:
+                reponse.delete_cookie(key="remen_Email")
+                
+            
+            return reponse
+                
         else:
             
             return templates.TemplateResponse("login.html", {"request": request, "error": "mot de passe incorect"}
@@ -111,6 +124,7 @@ async def home_page(
          
 
     else:
+    
         return templates.TemplateResponse("login.html", {"request": request, "error": "email introuvable"})
       
 
