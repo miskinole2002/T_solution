@@ -93,36 +93,38 @@ async def login(
     #     return RedirectResponse(url='/login', status_code=302)
 
     result=get_User_By_Email(session,email)
-    
+
     if result:
-        R= password_verify(password,result[5])
-        if R:
-            S = {
-                "user_id": result[0],
-                "nom": result[1],
-                "prenom": result[2],
-                "Email": result[3],
-                "role": result[4],
-            }
-            request.session["user"] = S
+        if result[4]=="1" or result[4]=="2":
+        
+            R= password_verify(password,result[5])
+            if R:
+                S = {
+                    "user_id": result[0],
+                    "nom": result[1],
+                    "prenom": result[2],
+                    "Email": result[3],
+                    "role": result[4],
+                }
+                request.session["user"] = S
 
-            reponse= RedirectResponse(url="/dashboard", status_code=302)
+                reponse= RedirectResponse(url="/dashboard", status_code=302)
 
-            if remenber:
-               r= reponse.set_cookie(key="remen_Email",value=email,max_age=60*5)
-               print(r)
+                if remenber:
+                  r= reponse.set_cookie(key="remen_Email",value=email,max_age=60*5)
+                
+                else:
+                    reponse.delete_cookie(key="remen_Email")
+                    
+                
+                return reponse
+                
             else:
-                reponse.delete_cookie(key="remen_Email")
-                
             
-            return reponse
-                
-        else:
-            
-            return templates.TemplateResponse("login.html", {"request": request, "error": "mot de passe incorect"}
-    )
-
          
+                return templates.TemplateResponse("login.html", {"request": request, "error": "mot de passe incorect"})
+        else:
+            return templates.TemplateResponse("login.html", {"request": request, "error": "vos acces ont ete revoque. Veuillez contactez votre Administrateur"})
 
     else:
     

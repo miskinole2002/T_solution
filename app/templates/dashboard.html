@@ -492,7 +492,7 @@
           <div class="adm-ava av1"></div>
           <div>
             <div class="adm-name">
-            {{item[2]}} &nbsp; {{item[1]}} &nbsp; {% if item[4]=="2"%}<span class="badge bg-teal">Gestionnaire</span>{%else%}<span class="badge bg-teal">Administrateur</span>{%endif%}
+            {{item[2]}} &nbsp; {{item[1]}} &nbsp; {% if item[4]=="2"%}<span class="badge bg-teal">Gestionnaire</span>{%elif item[4]=="1"%}<span class="badge bg-teal">Administrateur</span>{% else%}<span class="badge bg-gold">Acces revoque </span>{%endif%}
             </div>
             <div class="adm-email">{{item[3]}}</div>
           </div>
@@ -1229,6 +1229,8 @@
         <select class="inp inp-bare" name="Role" id="ed-Role" >
           <option value="2">Gestionnaire</option>
           <option value="1">Administrateur</option>
+          <option value="0">Acces revoque</option>
+
           
         </select>
       </div>
