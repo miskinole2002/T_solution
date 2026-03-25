@@ -1,4 +1,15 @@
-
+// permet de visualiser le mot de passe 
+function togglePassword() {
+    const input = document.getElementById('password');
+    const icon  = document.getElementById('eyeIcon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'bi bi-eye-slash-fill';
+    } else {
+      input.type = 'password';
+      icon.className = 'bi bi-eye-fill';
+    }
+  }
 
   function showSection(id, el) {
     document
@@ -67,6 +78,20 @@
 
 
     openModal("modal-edit-loc");
+  }
+  //modifier un administrateur
+
+  function openEditModalAdmin(id,Prenom,Nom,Email,Role) {
+   
+    
+    document.getElementById("edit-id-admin").value = id;
+    document.getElementById("ed-Prenom").value = Prenom;
+    document.getElementById("ed-Nom").value = Nom;
+    document.getElementById("ed-Email").value = Email;
+    // document.getElementById("ed-Password").value =Password;
+    document.getElementById("ed-Role").value = Role;
+
+    openModal("modal-edit-admin");
   }
 
 function showAlert(message) {

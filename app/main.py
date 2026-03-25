@@ -24,7 +24,8 @@ from .function import (
     upd_locataire_one,
     get_admin_by_Mail,
     Add_Admin,
-    get_all_admin,get_User_By_Email
+    get_all_admin,get_User_By_Email,
+    upd_admin
     
 )
 from starlette.middleware.sessions import SessionMiddleware
@@ -310,6 +311,19 @@ async def logout(request: Request):
     response = RedirectResponse(url="/")
     request.session.clear()
     return response
+
+@app.post("/edit_Admin")
+async def edit_Admin(session:SessionDep, request:Request,id:str=Form(...),Nom:str=Form(...),
+            
+      Prenom:str=Form(...),
+      Email:str=Form(...),
+      Role:str=Form(None),
+ ):
+    
+    upd_admin(session,id,Nom,Prenom,Email,Role)
+
+    return RedirectResponse(url="/dashboard", status_code=302)
+
 
 
 if __name__ == "__main__":

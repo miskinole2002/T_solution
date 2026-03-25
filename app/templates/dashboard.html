@@ -478,7 +478,7 @@
           <div class="adm-ava av2"></div>
           <div>
             <div class="adm-name">
-              {{U.nom}} &nbsp;{% if U.Role=="2"%}<span class="badge bg-teal">Administrateur</span>{%else%}<span class="badge bg-gold">Gestionnaire</span>{%endif%}
+              {{U.nom}} &nbsp;{% if U.Role=="2"%}<span class="badge bg-teal">Gestionnaire</span>{%else%}<span class="badge bg-gold">Administrateur</span>{%endif%}
             </div>
             <div class="adm-email">{{U.Email}}</div>
           </div>
@@ -492,14 +492,14 @@
           <div class="adm-ava av1"></div>
           <div>
             <div class="adm-name">
-            {{item[2]}} &nbsp; {{item[1]}} &nbsp; {% if item[4]=="2"%}<span class="badge bg-teal">Administrateur</span>{%else%}<span class="badge bg-teal">Gestionnaire</span>{%endif%}
+            {{item[2]}} &nbsp; {{item[1]}} &nbsp; {% if item[4]=="2"%}<span class="badge bg-teal">Gestionnaire</span>{%else%}<span class="badge bg-teal">Administrateur</span>{%endif%}
             </div>
             <div class="adm-email">{{item[3]}}</div>
           </div>
           <div class="adm-actions">
             <button
               class="btn btn-outline btn-sm"
-              onclick="openModal('modal-edit-admin')"
+              onclick="openEditModalAdmin('{{item[0]}}','{{item[2]}}','{{item[1]}}','{{item[3]}}','{{item[4]}}')"
             >
               <i class="bi bi-pencil-fill"></i> Modifier
             </button>
@@ -1164,8 +1164,8 @@
       <div class="field">
         <label>Rôle</label>
         <select class="inp inp-bare" name="Role">
-          <option value="1">Gestionnaire</option>
-          <option value="2">Administrateur</option>
+          <option value="2">Gestionnaire</option>
+          <option value="1">Administrateur</option>
         </select>
       </div>
     </div>
@@ -1190,20 +1190,23 @@
         <i class="bi bi-x-lg"></i>
       </button>
     </div>
+    <form action="/edit_Admin" method="post">
     <div class="modal-body">
+      <input class="inp" type="hidden" name="id" id="edit-id-admin" value=""  />
+
       <div class="field-row">
         <div class="field">
           <label>Prénom</label>
           <div class="inp-wrap">
             <i class="bi bi-person-fill"></i
-            ><input class="inp" type="text" value="Julie" />
+            ><input class="inp" type="text" placeholder="Prénom" name="Prenom" value="" id="ed-Prenom"/>
           </div>
         </div>
         <div class="field">
           <label>Nom</label>
           <div class="inp-wrap">
             <i class="bi bi-person-fill"></i
-            ><input class="inp" type="text" value="Lefebvre" />
+            ><input class="inp" type="text" placeholder="Nom" name="Nom" value="" id="ed-Nom"/>
           </div>
         </div>
       </div>
@@ -1211,26 +1214,34 @@
         <label>Email</label>
         <div class="inp-wrap">
           <i class="bi bi-envelope-fill"></i
-          ><input class="inp" type="email" value="julie@immopro.com" />
+          ><input class="inp" type="email" placeholder="admin@immopro.com" name="Email" value="" id="ed-Email" />
         </div>
       </div>
+      <!-- <div class="field">
+        <label> Nouveau Mot de passe</label>
+        <div class="inp-wrap">
+          <i class="bi bi-lock-fill"></i
+          ><input class="inp" type="password" placeholder="••••••••" name="Password" id="ed-Password" value=""/>
+        </div>
+      </div> -->
       <div class="field">
         <label>Rôle</label>
-        <select class="inp inp-bare">
-          <option selected>Administrateur</option>
-          <option>Gestionnaire</option>
-          <option>Comptable</option>
+        <select class="inp inp-bare" name="Role" id="ed-Role" >
+          <option value="2">Gestionnaire</option>
+          <option value="1">Administrateur</option>
+          
         </select>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-edit-admin')">
+      <button type="button" class="btn btn-outline" onclick="closeModal('modal-edit-admin')">
         Annuler
       </button>
-      <button class="btn btn-navy">
-        <i class="bi bi-check-lg"></i> Mettre à jour
+      <button type="submit" class="btn btn-navy">
+        <i class="bi bi-person-check-fill"></i> mettre a jour 
       </button>
     </div>
+    </form>
   </div>
 </div>
 

@@ -218,6 +218,7 @@ def get_all_admin(session):
     sql=text("select* from Users ")
     cursor=session.exec(sql)
     result=cursor.fetchall()
+    
     return result  
 #avoir un user par son email
 def get_User_By_Email(session,Email):
@@ -226,3 +227,18 @@ def get_User_By_Email(session,Email):
     cursor = session.exec(sql,params=params)
     result = cursor.fetchone()
     return result  
+# modifier un user 
+def upd_admin(session, id,Prenom,Nom,Email,Role):
+    sql = text(
+        "UPDATE Users SET Nom=:Nom, Prenom = :Prenom, Email = :Email, Role = :Role WHERE id= :id"
+    )
+
+    params = {
+        "id":id,
+      "Nom":Nom,
+      "Prenom":Prenom,
+      "Email":Email,
+      "Role":Role
+    }
+    session.exec(sql, params=params)
+    session.commit()
