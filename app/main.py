@@ -25,7 +25,9 @@ from .function import (
     get_admin_by_Mail,
     Add_Admin,
     get_all_admin,get_User_By_Email,
-    upd_admin
+    upd_admin,
+    Bail_Create,
+    All_bail
     
 )
 from starlette.middleware.sessions import SessionMiddleware
@@ -139,6 +141,8 @@ async def dashboard(session: SessionDep, request: Request):
     result = all_appartement(session) # retourne un tableau de tous les appartements 
     result_locataire=all_Locataires(session) # retourne un tableau de tous les locataires
     result_admin=get_all_admin(session)# retourne un tableau d administrateur
+    result_Bail=All_bail(session)#retourne tous les bails qui ne sont pas supprime 
+    print(result_Bail)
     
     if error:
         return templates.TemplateResponse(
@@ -263,15 +267,16 @@ async def delete_App(session: SessionDep, request: Request, id: str):
 #creer un bail
 @app.post("/Create_Bail")
 async def create_Bail(session:SessionDep, request:Request,
-                      Nom_Locataire:str=Form(...),
-                      N_App:str=Form(...),
+                      id_Locataire:str=Form(...),
+                      id_App:str=Form(...),
                       date_debut:str=Form(...),
                       date_fin:str=Form(...),
                       prix:str=Form(...),
                       Statut:str=Form(...)
                       ):
     
-    print(date_debut)
+    
+    Bail_Create(session, id_Locataire, id_App, date_debut, date_fin, prix,Statut)
 
     
     return RedirectResponse(url="/dashboard", status_code=302)

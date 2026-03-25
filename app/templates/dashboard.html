@@ -492,7 +492,7 @@
           <div class="adm-ava av1"></div>
           <div>
             <div class="adm-name">
-            {{item[2]}} &nbsp; {{item[1]}} &nbsp; {% if item[4]=="2"%}<span class="badge bg-teal">Gestionnaire</span>{%elif item[4]=="1"%}<span class="badge bg-teal">Administrateur</span>{% else%}<span class="badge bg-gold">Acces revoque </span>{%endif%}
+            {{item[2]}} &nbsp; {{item[1]}} &nbsp; {% if item[4]=="2"%}<span class="badge bg-green">Gestionnaire</span>{%elif item[4]=="1"%}<span class="badge bg-teal">Administrateur</span>{% else%}<span class="badge bg-red">Acces revoque </span>{%endif%}
             </div>
             <div class="adm-email">{{item[3]}}</div>
           </div>
@@ -503,12 +503,12 @@
             >
               <i class="bi bi-pencil-fill"></i> Modifier
             </button>
-            <button
+            <!-- <button
               class="btn btn-danger btn-sm"
               onclick="confirmDelete('Julie Lefebvre')"
             >
               <i class="bi bi-trash-fill"></i>
-            </button>
+            </button> -->
           </div>
         </div>
         {%endfor%}
@@ -938,22 +938,22 @@
     <div class="modal-body">
       <div class="field">
         <label> Email Locataire</label>
-        <select name="Nom_Locataire" class="inp inp-bare">
+        <select name="id_Locataire" class="inp inp-bare">
 
           <option>-- Choisir --</option>
         {%for item in B%}
 
-          <option>{{item[4]}}</option>
+          <option value="{{item[0]}}">{{item[1]}} {{item[2]}} ( {{item[4]}} )</option>
         {%endfor%}
         
         </select>
       </div>
       <div class="field">
         <label>Appartement</label>
-        <select name="N_App" class="inp inp-bare">
+        <select name="id_App" class="inp inp-bare">
           <option>-- Choisir --</option>
            {%for item in A%}
-          <option>{{item[1]}}</option>
+          <option value="{{item[0]}}">{{item[1]}}</option>
             {%endfor%}
         </select>
       </div>

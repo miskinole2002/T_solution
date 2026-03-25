@@ -165,28 +165,30 @@ def get_id_App_by_name():
       return 
 #creer un Bail
 
-def Bail_Create(session, Nom_Locataire, N_App, date_debut, date_fin, prix,Statut):
+def Bail_Create(session, id_Locataire, id_App, date_debut, date_fin, prix,Statut):
          sql = text(
-                "INSERT INTO Locataires (id,id_App,Nom_Locataire, N_App, date_debut, date_fin, prix,Statut,is_Delete) " \
-                "VALUES (:Nom_Locataire, :N_App, :date_debut, :date_fin, :prix,:Statut,:is_Delete)"
+                "INSERT INTO Bails (id_Locataire,id_Appartement,prix,date_debut, date_fin, statut,is_Delete) VALUES (:id_Locataire, :id_Appartement, :prix,:date_debut, :date_fin ,:statut,:is_Delete)"
             )
 
          params = {
-                "Nom": Nom,
-                "Prenom": Prenom,
-                "Tel": Tel,
-                "Email": Email,
-                "NumeroRue": NumeroRue,
-                "Rue":Rue,
-                "NumeroApp":NumeroApp,
-                "ville":ville,
-                "province":province,
-                "code":code,
+                "id_Locataire":id_Locataire,
+                "id_Appartement":id_App,
+                "prix":prix,
+                "date_debut":date_debut, 
+                "date_fin":date_fin, 
+                "statut":Statut,
                 "is_Delete":0 
             }
         
          session.exec(sql, params=params)
          session.commit()
+
+def All_bail(session):
+     sql=text("SELECT l.Nom,l.Prenom,l.Tel,a.N_App,b.prix,b.date_debut,b.date_fin,b.statut FROM Bails b JOIN Locataires l ON b.id_Locataire = l.id JOIN Appartement a ON b.id_Appartement = a.id_App WHERE b.is_Delete = :is_Delete")
+     params={"is_Delete":0}
+     cursor=session.exec(sql,params=params)
+     result=cursor.fetchall()
+     return result
 #ajouter un administrateur
 
 def Add_Admin(session,Nom,Prenom,Email, Role,Password):
@@ -242,3 +244,5 @@ def upd_admin(session, id,Prenom,Nom,Email,Role):
     }
     session.exec(sql, params=params)
     session.commit()
+
+
