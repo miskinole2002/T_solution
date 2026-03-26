@@ -184,7 +184,7 @@ def Bail_Create(session, id_Locataire, id_App, date_debut, date_fin, prix,Statut
          session.commit()
 
 def All_bail(session):
-     sql=text("SELECT l.Nom,l.Prenom,l.Tel,a.N_App,b.prix,b.date_debut,b.date_fin,b.statut FROM Bails b JOIN Locataires l ON b.id_Locataire = l.id JOIN Appartement a ON b.id_Appartement = a.id_App WHERE b.is_Delete = :is_Delete")
+     sql=text("SELECT b.id_Bail, l.Nom,l.Prenom,l.Tel,a.N_App,b.prix,b.date_debut,b.date_fin,b.statut FROM Bails b JOIN Locataires l ON b.id_Locataire = l.id JOIN Appartement a ON b.id_Appartement = a.id_App WHERE b.is_Delete = :is_Delete")
      params={"is_Delete":0}
      cursor=session.exec(sql,params=params)
      result=cursor.fetchall()

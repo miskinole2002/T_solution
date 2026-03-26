@@ -100,26 +100,142 @@ function showAlert(message) {
 }
 
 
-  function validateApp() {
-  const N_App = document.querySelector('[name="N_App"]').value.trim();
-  const etage = document.querySelector('[name="etage"]').value.trim();
-  const Superficie = document.querySelector('[name="Superficie"]').value.trim();
+//   function validateApp() {
+//   const N_App = document.querySelector('[name="N_App"]').value.trim();
+//   const etage = document.querySelector('[name="etage"]').value.trim();
+//   const Superficie = document.querySelector('[name="Superficie"]').value.trim();
 
-  if (!N_App) {
-    showAlert("Le numéro d'appartement est obligatoire");
-    return false;
+//   if (!N_App) {
+//     showAlert("Le numéro d'appartement est obligatoire");
+//     return false;
+//   }
+
+//   if (!etage) {
+//     showAlert("L'étage est obligatoire");
+//     return false;
+//   }
+
+//   if (!Superficie || Superficie <= 0) {
+//     showAlert("La superficie doit être supérieure à 0");
+//     return false;
+//   }
+
+//   return true; 
+// }
+
+document.addEventListener("DOMContentLoaded", function () {
+  
+  const today = new Date().toISOString().split("T")[0];
+
+  const date_debut = document.getElementById("date_debut");
+  const date_fin = document.getElementById("date_fin");
+
+  if (date_debut) date_debut.min = today;
+  if (date_fin) date_fin.min = today;
+
+});
+
+function setMinDateFin() {
+  const debut = document.getElementById("date_debut").value;
+  if (debut) {
+    document.getElementById("date_fin").min = debut;
   }
-
-  if (!etage) {
-    showAlert("L'étage est obligatoire");
-    return false;
-  }
-
-  if (!Superficie || Superficie <= 0) {
-    showAlert("La superficie doit être supérieure à 0");
-    return false;
-  }
-
-  return true; 
 }
 
+
+function validateRealTime(fieldId, errorId, message, condition) {
+  const field = document.getElementById(fieldId);
+  const error = document.getElementById(errorId);
+
+  field.addEventListener("input", function () {
+    if (condition(field.value)) {
+      error.style.display = "none";
+      field.style.borderColor = "#0d9488"; // vert
+    } else {
+      error.style.display = "block";
+      field.style.borderColor = "#dc2626"; // rouge
+    }
+  });
+}
+
+// Utilisation
+document.addEventListener("DOMContentLoaded", function () {
+  
+  // Valider email
+  validateRealTime(
+    "email",
+    "error-email",
+    "Email invalide",
+    (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
+  );
+
+  // Valider téléphone
+  validateRealTime(
+    "Tel",
+    "error-tel",
+    "Téléphone invalide",
+    (val) => val.length >= 10
+  );
+
+  // Valider champ non vide
+  validateRealTime(
+    "Nom",
+    "error-nom",
+    "Nom obligatoire",
+    (val) => val.trim() !== ""
+  );
+
+});
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  // Validation temps réel appartement
+  const apFields = [
+    { id: "N_App",      errorId: "error-N_App",      check: (v) => v.trim() !== "" },
+    { id: "etage",      errorId: "error-etage",      check: (v) => v.trim() !== "" },
+    { id: "Superficie", errorId: "error-Superficie", check: (v) => v > 0 }
+  ];
+
+  apFields.forEach(({ id, errorId, check }) => {
+    const field = document.getElementById(id);
+    const error = document.getElementById(errorId);
+    if (!field) return;
+
+    field.addEventListener("input", function () {
+      if (check(field.value)) {
+        error.style.display = "none";
+        field.style.borderColor = "#0d9488"; // vert
+      } else {
+        error.style.display = "block";
+        field.style.borderColor = "#dc2626"; // rouge
+      }
+    });
+  });
+
+});
+
+// Validation avant soumission
+function validateApp() {
+  let valid = true;
+
+  const apFields = [
+    { id: "N_App",      errorId: "error-N_App",      check: (v) => v.trim() !== "" },
+    { id: "etage",      errorId: "error-etage",      check: (v) => v.trim() !== "" },
+    { id: "Superficie", errorId: "error-Superficie", check: (v) => v > 0 }
+  ];
+
+  apFields.forEach(({ id, errorId, check }) => {
+    const field = document.getElementById(id);
+    const error = document.getElementById(errorId);
+    if (!check(field.value)) {
+      error.style.display = "block";
+      field.style.borderColor = "#dc2626";
+      valid = false;
+    }
+  });
+
+  return valid; // false = bloque l'envoi
+}

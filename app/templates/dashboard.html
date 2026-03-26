@@ -1,6 +1,8 @@
 {% extends "base.html" %} {% block content %}
 
   <link rel="stylesheet" href="/static/css/dashboard.css"/>
+  <script src="/static/js/main.js"></script>
+
 
 <div class="dash-layout">
   <!-- ████ SIDEBAR ████ -->
@@ -226,10 +228,10 @@
           <i class="bi bi-file-earmark-plus-fill"></i> Créer un bail
         </button>
       </div>
-      <div class="alert-strip al-warn">
+      <!-- <div class="alert-strip al-warn">
         <i class="bi bi-exclamation-triangle-fill"></i> 2 bails expirent dans
         moins de 30 jours.
-      </div>
+      </div> -->
       <div class="card">
         <div class="card-head">
           <h3><i class="bi bi-file-earmark-check-fill"></i> Liste des bails</h3>
@@ -243,6 +245,7 @@
           <thead>
             <tr>
               <th>Locataire</th>
+              <th>Tel</th>
               <th>Appartement</th>
               <th>Début</th>
               <th>Fin</th>
@@ -252,13 +255,16 @@
             </tr>
           </thead>
           <tbody>
+            {%for item in D %}
             <tr>
-              <td><strong>Karim Dubois</strong></td>
-              <td>App. 301</td>
-              <td>01/01/2024</td>
-              <td>31/12/2024</td>
-              <td>1 250 $</td>
-              <td><span class="badge bg-green">Actif</span></td>
+              <td><strong>{{item[2]}} {{item[1]}}</strong></td>
+              <td>{{item[3]}}</td>
+
+              <td>App. {{item[4]}}</td>
+              <td>{{item[6]}}</td>
+              <td>{{item[7]}}</td>
+              <td>{{item[5]}} $</td>
+              <td><span class="badge bg-green">{{item[8]}}</span></td>
               <td class="t-actions">
                 <button
                   class="btn btn-outline btn-sm"
@@ -266,9 +272,9 @@
                 >
                   <i class="bi bi-pencil-fill"></i> Modifier
                 </button>
-                <button class="btn btn-success btn-sm">
+                <!-- <button class="btn btn-success btn-sm">
                   <i class="bi bi-arrow-repeat"></i> Renouveler
-                </button>
+                </button> -->
                 <button
                   class="btn btn-danger btn-sm"
                   onclick="confirmDelete('Bail — Karim Dubois')"
@@ -277,7 +283,7 @@
                 </button>
               </td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td><strong>Sara Martin</strong></td>
               <td>App. 102</td>
               <td>01/03/2023</td>
@@ -326,7 +332,8 @@
                   <i class="bi bi-trash-fill"></i>
                 </button>
               </td>
-            </tr>
+            </tr> -->
+          {% endfor %}
           </tbody>
         </table>
       </div>
@@ -543,7 +550,7 @@
       </button>
     </div>
     <!--  -->
-    <form method="POST" action="/add_App" onsubmit="return validateApp()">
+    <!-- <form method="POST" action="/add_App" onsubmit="return validateApp()">
       <div class="modal-body">
         <div class="field-row">
           <div class="field">
@@ -592,16 +599,16 @@
         </div>
         <div class="field-row">
           <!-- <div class="field"><label>Loyer mensuel ($)</label><div class="inp-wrap"><i class="bi bi-cash-coin"></i><input class="inp" type="number" placeholder="1 200"/></div></div> -->
-          <div class="field">
+          <!-- <div class="field">
             <label>Statut</label
             ><select name="status" class="inp inp-bare">
               <option>Disponible</option>
               <option>Occupé</option>
             </select>
           </div>
-        </div>
+        </div> -->
         <!-- <div class="field"><label>Description</label><textarea class="inp inp-bare" rows="3" style="resize:vertical;" placeholder="Notes…"></textarea></div> -->
-      </div>
+      <!-- </div>
       <div class="modal-footer">
         <button
           type="button"
@@ -614,7 +621,73 @@
           <i class="bi bi-check-lg"></i> Enregistrer
         </button>
       </div>
-    </form>
+    </form>  -->
+
+    <form method="POST" action="/add_App" onsubmit="return validateApp()"> 
+  <div class="modal-body">
+    <div class="field-row">
+      <div class="field">
+        <label>N° Appartement</label>
+        <div class="inp-wrap">
+          <i class="bi bi-door-open"></i>
+          <input class="inp" name="N_App" id="N_App" placeholder="ex: 301"/>
+        </div>
+        <span id="error-N_App" style="display:none; color:#dc2626; font-size:0.8rem;">
+          <i class="bi bi-exclamation-circle"></i> Numéro obligatoire
+        </span>
+      </div>
+      <div class="field">
+        <label>Étage</label>
+        <div class="inp-wrap">
+          <i class="bi bi-building"></i>
+          <input class="inp" type="text" placeholder="ex: 3ème" name="etage" id="etage"/>
+        </div>
+        <span id="error-etage" style="display:none; color:#dc2626; font-size:0.8rem;">
+          <i class="bi bi-exclamation-circle"></i> Étage obligatoire
+        </span>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Superficie (m²)</label>
+        <div class="inp-wrap">
+          <i class="bi bi-rulers"></i>
+          <input class="inp" type="number" placeholder="75" name="Superficie" id="Superficie" min="0"/>
+        </div>
+        <span id="error-Superficie" style="display:none; color:#dc2626; font-size:0.8rem;">
+          <i class="bi bi-exclamation-circle"></i> Superficie obligatoire
+        </span>
+      </div>
+      <div class="field">
+        <label>Type</label>
+        <select class="inp inp-bare" name="type">
+          <option>T1</option>
+          <option>T2</option>
+          <option>T3</option>
+          <option>T4</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Statut</label>
+        <select name="status" class="inp inp-bare">
+          <option>Disponible</option>
+          <option>Occupé</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" onclick="closeModal('modal-add-apt')">Annuler</button>
+    <button class="btn btn-teal" type="submit">
+      <i class="bi bi-check-lg"></i> Enregistrer
+    </button>
+  </div>
+</form>
   </div>
 </div>
 
@@ -961,13 +1034,13 @@
         <div class="field">
           <label>Date de début</label>
           <div class="inp-wrap">
-            <i class="bi bi-calendar-fill"></i><input class="inp" type="date" name="date_debut" />
+            <i class="bi bi-calendar-fill"></i><input class="inp" type="date" name="date_debut" id="date_debut" onchange="setMinDateFin()"/>
           </div>
         </div>
         <div class="field">
           <label>Date de fin</label>
           <div class="inp-wrap">
-            <i class="bi bi-calendar-fill"></i><input class="inp" type="date" name="date_fin" />
+            <i class="bi bi-calendar-fill"></i><input class="inp" type="date" id="date_fin" name="date_fin" />
           </div>
         </div>
       </div>
@@ -1291,105 +1364,38 @@
   </div>
 </div>
 
-<!-- <script>
-  function showSection(id, el) {
-    document
-      .querySelectorAll(".dash-section")
-      .forEach((s) => s.classList.remove("active"));
-    document
-      .querySelectorAll(".sb-link")
-      .forEach((b) => b.classList.remove("active"));
-    document.getElementById("section-" + id).classList.add("active");
-    el.classList.add("active");
-  }
-  function openModal(id) {
-    document.getElementById(id).classList.add("open");
-    document.body.style.overflow = "hidden";
-  }
-  function closeModal(id) {
-    document.getElementById(id).classList.remove("open");
-    document.body.style.overflow = "";
-  }
-  document.querySelectorAll(".modal-overlay").forEach((o) => {
-    o.addEventListener("click", (e) => {
-      if (e.target === o) closeModal(o.id);
-    });
-  });
-  function confirmDelete(name, route, id) {
-    document.getElementById("delete-name").textContent = name;
-    document.getElementById("btn-delete").href = "/" + route + "/" + id;
-    openModal("modal-delete");
-  }
-  function filterTable(input, id) {
-    const v = input.value.toLowerCase();
-    document.querySelectorAll("#" + id + " tbody tr").forEach((r) => {
-      r.style.display = r.textContent.toLowerCase().includes(v) ? "" : "none";
-    });
-  }
+<!-- les cookies  -->
 
-  function closeAlert(id) {
-    document.getElementById(id).style.display = "none";
-  }
-
-  function openEditModalApp(id, N_App, etage, Superficie, type, status) {
-    document.getElementById("edit-id").value = id;
-    document.getElementById("edit-N_App").value = N_App;
-    document.getElementById("edit-etage").value = etage;
-    document.getElementById("edit-Superficie").value = Superficie;
-    document.getElementById("edit-type").value = type;
-    document.getElementById("edit-status").value = status;
-    openModal("modal-edit-apt");
-  }
-  
-  function openEditModalLoc(id,Nom,Prenom, Tel,Email,NumeroRue,Rue,NumeroApp,ville,province,code) {
-   
-    console.log("element:", document.getElementById("edit-id"));
-    document.getElementById("edit-id_loc").value = id;
-    document.getElementById("edit-Nom").value = Nom;
-    document.getElementById("edit-Prenom").value = Prenom;
-    document.getElementById("edit-Tel").value = Tel;
-    document.getElementById("edit-Email").value = Email;
-    document.getElementById("edit-Rue").value =Rue;
-    document.getElementById("edit-NumeroRue").value = NumeroRue;
-    document.getElementById("edit-NumeroApp").value = NumeroApp;
-    document.getElementById("edit-ville").value = ville;
-    document.getElementById("edit-province").value = province;
-    document.getElementById("edit-code").value = code;
-    
-
-
-    openModal("modal-edit-loc");
-  }
-
-function showAlert(message) {
-  document.getElementById("alert-msg").innerText = message;
-  document.getElementById("alert-strip").style.display = "flex";
-}
-
-
-  function validateApp() {
-  const N_App = document.querySelector('[name="N_App"]').value.trim();
-  const etage = document.querySelector('[name="etage"]').value.trim();
-  const Superficie = document.querySelector('[name="Superficie"]').value.trim();
-
-  if (!N_App) {
-    showAlert("Le numéro d'appartement est obligatoire");
-    return false;
-  }
-
-  if (!etage) {
-    showAlert("L'étage est obligatoire");
-    return false;
-  }
-
-  if (!Superficie || Superficie <= 0) {
-    showAlert("La superficie doit être supérieure à 0");
-    return false;
-  }
-
-  return true; // tout est valide → envoie le formulaire
-}
-</script> -->
+<!-- Bannière cookies -->
+ 
+{% if showcookies %}
+<div id="cookie-banner" style="
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1e2d3d;
+  color: #fff;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 9999;
+  gap: 16px;
+  flex-wrap: wrap;
+">
+  <span style="font-size: 0.875rem;">
+  Ce site web utilise des cookies. Ces cookies servent à collecter des informations sur votre navigation et nous permettent de vous reconnaître lors de vos prochaines visites. Nous utilisons ces informations pour améliorer et personnaliser votre expérience de navigation, ainsi que pour analyser l'audience de notre site et d'autres supports de communication. Pour en savoir plus sur les cookies que nous utilisons, veuillez consulter notre Politique de confidentialité .
+Si vous refusez, vos informations ne seront pas suivies lors de votre visite sur ce site web. Un seul cookie sera utilisé dans votre navigateur pour mémoriser votre préférence de ne pas être suivi.
+    <a href="/politique-cookies" style="color:#0d9488;">En savoir plus</a>
+  </span>
+  <div style="display: flex; gap: 10px;">
+    <a href="/cookie/accept" class="btn btn-teal">Accepter</a>
+    <a href="/cookie/refuse" class="btn btn-outline" > Refuser</a>
+  </div>
+</div>
+{% endif %}
 
 
 {% endblock %}
+

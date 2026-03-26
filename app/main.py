@@ -138,20 +138,22 @@ async def login(
 async def dashboard(session: SessionDep, request: Request):
     User = request.session.get("user")
     error = request.session.pop("error", None)
+    cookie = request.cookies.get("cookie_consent",None)
+    show_cookie = cookie is None
     result = all_appartement(session) # retourne un tableau de tous les appartements 
     result_locataire=all_Locataires(session) # retourne un tableau de tous les locataires
     result_admin=get_all_admin(session)# retourne un tableau d administrateur
     result_Bail=All_bail(session)#retourne tous les bails qui ne sont pas supprime 
-    print(result_Bail)
+
     
     if error:
         return templates.TemplateResponse(
             "dashboard.html",
-            {"request": request, "U": User, "A": result, "error": error,"C":result_admin}
+            {"request": request, "U": User, "A": result, "error": error,"C":result_admin,"D":result_Bail,"showcookies":show_cookie}
         )
 
     return templates.TemplateResponse(
-        "dashboard.html", {"request": request, "U": User,"B": result_locataire, "A": result,"C":result_admin}
+        "dashboard.html", {"request": request, "U": User,"B": result_locataire, "A": result,"C":result_admin,"D":result_Bail,"showcookies":show_cookie}
     )
 
 # ajouter un appartement
@@ -331,7 +333,22 @@ async def edit_Admin(session:SessionDep, request:Request,id:str=Form(...),Nom:st
 
     return RedirectResponse(url="/dashboard", status_code=302)
 
-
+# Route pour accepter les cookies
+@app.get("/cookie/accept")
+async def cookie_accept(request: Request):
+    response =RedirectResponse(url="/dashboard", status_code=302)
+    
+    response.set_cookie( key="cookie_consent",  value="accepted", max_age=60*60*1 )
+    
+    return response
+# Route pour refuser les cookies
+@app.get("/cookie/refuse")
+async def cookie_refuse(request: Request):
+    response = RedirectResponse(url="/dashboard", status_code=302)
+    
+    response.set_cookie( key="cookie_consent",  value="refused", max_age=60*60*1 )
+    
+    return response
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001, workers=1)
