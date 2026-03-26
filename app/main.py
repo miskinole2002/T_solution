@@ -27,7 +27,8 @@ from .function import (
     get_all_admin,get_User_By_Email,
     upd_admin,
     Bail_Create,
-    All_bail
+    All_bail,
+    Edit_bail
     
 )
 from starlette.middleware.sessions import SessionMiddleware
@@ -279,6 +280,21 @@ async def create_Bail(session:SessionDep, request:Request,
     
     
     Bail_Create(session, id_Locataire, id_App, date_debut, date_fin, prix,Statut)
+
+    
+    return RedirectResponse(url="/dashboard", status_code=302)
+
+@app.post("/edit_Bail")
+async def edit_Bail(session:SessionDep, request:Request,
+                      id:str=Form(...),
+                      date_debut:str=Form(...),
+                      date_fin:str=Form(...),
+                      prix:str=Form(...),
+                      Statut:str=Form(...)
+                      ):
+    
+    
+    Edit_bail(session, id, date_debut, date_fin, prix,Statut)
 
     
     return RedirectResponse(url="/dashboard", status_code=302)

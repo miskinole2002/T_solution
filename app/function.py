@@ -189,6 +189,22 @@ def All_bail(session):
      cursor=session.exec(sql,params=params)
      result=cursor.fetchall()
      return result
+
+def Edit_bail(session,id ,date_debut, date_fin, prix,Statut):
+    sql = text(
+                "UPDATE Bails SET  prix=:prix ,date_debut=:date_debut, date_fin= :date_fin , statut=:statut where id_Bail=:id_Bail"
+            )
+
+    params = {
+                "id_Bail":id,
+                "prix":prix,
+                "date_debut":date_debut, 
+                "date_fin":date_fin, 
+                "statut":Statut,
+            }
+    session.exec(sql, params=params)
+    session.commit()
+     
 #ajouter un administrateur
 
 def Add_Admin(session,Nom,Prenom,Email, Role,Password):

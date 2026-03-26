@@ -94,6 +94,23 @@ function togglePassword() {
     openModal("modal-edit-admin");
   }
 
+   //modifier un bail
+
+  function openEditModalBail(id,Nom,Prenom,dateDebut,dateFin,Prix,status) {
+   
+    
+    document.getElementById("edit-id-bail").value = id;
+    document.getElementById("Prenom").value = Prenom;
+    document.getElementById("Nom").value = Nom;
+    document.getElementById("ed-dateDebut").value = dateDebut;
+    document.getElementById("ed-dateFin").value = dateFin;
+    document.getElementById("ed-Prix").value = Prix;
+    document.getElementById("ed-Status").value = status;
+   
+
+    openModal("modal-edit-bail");
+  }
+
 function showAlert(message) {
   document.getElementById("alert-msg").innerText = message;
   document.getElementById("alert-strip").style.display = "flex";
@@ -126,19 +143,19 @@ function showAlert(message) {
 document.addEventListener("DOMContentLoaded", function () {
   
   const today = new Date().toISOString().split("T")[0];
+  const Tab=["date_debut","date_fin","ed-dateDebut","ed-dateFin"]
 
-  const date_debut = document.getElementById("date_debut");
-  const date_fin = document.getElementById("date_fin");
-
-  if (date_debut) date_debut.min = today;
-  if (date_fin) date_fin.min = today;
-
+  Tab.forEach(id => {
+    const dat = document.getElementById(id);
+    if (dat) dat.min = today;  
+  });
+ 
 });
 
-function setMinDateFin() {
-  const debut = document.getElementById("date_debut").value;
+function setMinDateFin(Date_debut,Date_fin) {
+  const debut = document.getElementById(Date_debut).value;
   if (debut) {
-    document.getElementById("date_fin").min = debut;
+    document.getElementById(Date_fin).min = debut;
   }
 }
 
